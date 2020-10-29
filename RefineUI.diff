@@ -1,0 +1,5054 @@
+Index: conf/battle/feature.conf
+===================================================================
+--- conf/battle/feature.conf	(revisão 65528)
++++ conf/battle/feature.conf	(cópia de trabalho)
+@@ -107,3 +107,10 @@
+ // Private Airship System (Note 1)
+ // Requires: 2018-03-21aRagexeRE or later
+ feature.privateairship: on
++
++// Refine UI (Note 3)
++// Requires: 2016-10-12aRagexeRE or later
++// 0 = Disabled
++// 1 = Enabled
++// 2 = Enabled in existing official scripts (old dialogs were removed and replaced by the UI)
++feature.refineui: 3
+Index: conf/battle/items.conf
+===================================================================
+--- conf/battle/items.conf	(revisão 65528)
++++ conf/battle/items.conf	(cópia de trabalho)
+@@ -120,11 +120,6 @@
+ // 0x8 = Only Guild Leader can sell BOUND_GUILD items to Shops or Itemshops (if 0x1 or 0x4 set)
+ allow_bound_sell: 0x0
+ 
+-// Turn on event refine chance (see db/{pre-}re/refine_db.yml)
+-// no = normal refine chances in effect (official/default value)
+-// yes = event refine chances in effect
+-event_refine_chance: no
+-
+ // Hide n last characters of player's name with asterisk (*) when the player
+ // obtained an item with special broadcast flag.
+ // Note: Players with short names can be fully converted to asterisks if this
+Index: conf/msg_conf/map_msg.conf
+===================================================================
+--- conf/msg_conf/map_msg.conf	(revisão 65528)
++++ conf/msg_conf/map_msg.conf	(cópia de trabalho)
+@@ -836,7 +836,10 @@
+ // Achievements
+ 772: Achievements are disabled.
+ 
+-//773-775 reserved for refine UI
++// @refineui
++773: This command requires packet version 2016-10-12 or newer.
++774: This command is disabled via configuration.
++775: You have already opened the refine UI.
+ //776-781 reserved for tax system
+ 
+ 782: Star Emperor
+Index: db/pre-re/refine_db.yml
+===================================================================
+--- db/pre-re/refine_db.yml	(revisão 65528)
++++ db/pre-re/refine_db.yml	(cópia de trabalho)
+@@ -29,37 +29,187 @@
+     - Type: REFINE_COST_ENRICHED
+       Price: 2000
+       Material: 7619
++    - Type: REFINE_COST_EVT_ENRICHED
++      Price: 2000
++      Material: 7619
++      RefineUI: false
+   Rates:
++    - Level: 1
++      Chances:
++      - Type: REFINE_COST_NORMAL
++        Rate: 100
++      - Type: REFINE_COST_ENRICHED
++        Rate: 100
++      - Type: REFINE_COST_EVT_ENRICHED
++        Rate: 100
++    - Level: 2
++      Chances:
++      - Type: REFINE_COST_NORMAL
++        Rate: 100
++      - Type: REFINE_COST_ENRICHED
++        Rate: 100
++      - Type: REFINE_COST_EVT_ENRICHED
++        Rate: 100
++    - Level: 3
++      Chances:
++      - Type: REFINE_COST_NORMAL
++        Rate: 100
++      - Type: REFINE_COST_ENRICHED
++        Rate: 100
++      - Type: REFINE_COST_EVT_ENRICHED
++        Rate: 100
++    - Level: 4
++      Chances:
++      - Type: REFINE_COST_NORMAL
++        Rate: 100
++      - Type: REFINE_COST_ENRICHED
++        Rate: 100
++      - Type: REFINE_COST_EVT_ENRICHED
++        Rate: 100
+     - Level: 5
+-      NormalChance: 60
+-      EnrichedChance: 90
+-      EventNormalChance: 60
+-      EventEnrichedChance: 95
++      Chances:
++      - Type: REFINE_COST_NORMAL
++        Rate: 60
++      - Type: REFINE_COST_ENRICHED
++        Rate: 90
++      - Type: REFINE_COST_EVT_ENRICHED
++        Rate: 95
+     - Level: 6
+-      NormalChance: 40
+-      EnrichedChance: 70
+-      EventNormalChance: 40
+-      EventEnrichedChance: 80
++      Chances:
++      - Type: REFINE_COST_NORMAL
++        Rate: 40
++      - Type: REFINE_COST_ENRICHED
++        Rate: 70
++      - Type: REFINE_COST_EVT_ENRICHED
++        Rate: 80
+     - Level: 7
+-      NormalChance: 40
+-      EnrichedChance: 70
+-      EventNormalChance: 40
+-      EventEnrichedChance: 80
++      Chances:
++      - Type: REFINE_COST_NORMAL
++        Rate: 40
++      - Type: REFINE_COST_ENRICHED
++        Rate: 70
++      - Type: REFINE_COST_EVT_ENRICHED
++        Rate: 80
+     - Level: 8
+-      NormalChance: 20
+-      EnrichedChance: 40
+-      EventNormalChance: 20
+-      EventEnrichedChance: 50
++      Chances:
++      - Type: REFINE_COST_NORMAL
++        Rate: 20
++      - Type: REFINE_COST_ENRICHED
++        Rate: 40
++      - Type: REFINE_COST_EVT_ENRICHED
++        Rate: 50
+     - Level: 9
+-      NormalChance: 20
+-      EnrichedChance: 40
+-      EventNormalChance: 20
+-      EventEnrichedChance: 50
++      Chances:
++      - Type: REFINE_COST_NORMAL
++        Rate: 20
++      - Type: REFINE_COST_ENRICHED
++        Rate: 40
++      - Type: REFINE_COST_EVT_ENRICHED
++        Rate: 50
+     - Level: 10
+-      NormalChance: 9
+-      EnrichedChance: 20
+-      EventNormalChance: 9
+-      EventEnrichedChance: 35
++      Chances:
++      - Type: REFINE_COST_NORMAL
++        Rate: 9
++      - Type: REFINE_COST_ENRICHED
++        Rate: 20
++      - Type: REFINE_COST_EVT_ENRICHED
++        Rate: 35
++Costume:
++  StatsPerLevel: 66
++  RandomBonusStartLevel: 0
++  RandomBonusValue: 0
++  Costs:
++    - Type: REFINE_COST_NORMAL
++      Price: 2000
++      Material: 985
++    - Type: REFINE_COST_ENRICHED
++      Price: 2000
++      Material: 7619
++    - Type: REFINE_COST_EVT_ENRICHED
++      Price: 2000
++      Material: 7619
++      RefineUI: false
++  Rates:
++    - Level: 1
++      Chances:
++      - Type: REFINE_COST_NORMAL
++        Rate: 100
++      - Type: REFINE_COST_ENRICHED
++        Rate: 100
++      - Type: REFINE_COST_EVT_ENRICHED
++        Rate: 100
++    - Level: 2
++      Chances:
++      - Type: REFINE_COST_NORMAL
++        Rate: 100
++      - Type: REFINE_COST_ENRICHED
++        Rate: 100
++      - Type: REFINE_COST_EVT_ENRICHED
++        Rate: 100
++    - Level: 3
++      Chances:
++      - Type: REFINE_COST_NORMAL
++        Rate: 100
++      - Type: REFINE_COST_ENRICHED
++        Rate: 100
++      - Type: REFINE_COST_EVT_ENRICHED
++        Rate: 100
++    - Level: 4
++      Chances:
++      - Type: REFINE_COST_NORMAL
++        Rate: 100
++      - Type: REFINE_COST_ENRICHED
++        Rate: 100
++      - Type: REFINE_COST_EVT_ENRICHED
++        Rate: 100
++    - Level: 5
++      Chances:
++      - Type: REFINE_COST_NORMAL
++        Rate: 60
++      - Type: REFINE_COST_ENRICHED
++        Rate: 90
++      - Type: REFINE_COST_EVT_ENRICHED
++        Rate: 95
++    - Level: 6
++      Chances:
++      - Type: REFINE_COST_NORMAL
++        Rate: 40
++      - Type: REFINE_COST_ENRICHED
++        Rate: 70
++      - Type: REFINE_COST_EVT_ENRICHED
++        Rate: 80
++    - Level: 7
++      Chances:
++      - Type: REFINE_COST_NORMAL
++        Rate: 40
++      - Type: REFINE_COST_ENRICHED
++        Rate: 70
++      - Type: REFINE_COST_EVT_ENRICHED
++        Rate: 80
++    - Level: 8
++      Chances:
++      - Type: REFINE_COST_NORMAL
++        Rate: 20
++      - Type: REFINE_COST_ENRICHED
++        Rate: 40
++      - Type: REFINE_COST_EVT_ENRICHED
++        Rate: 50
++    - Level: 9
++      Chances:
++      - Type: REFINE_COST_NORMAL
++        Rate: 20
++      - Type: REFINE_COST_ENRICHED
++        Rate: 40
++      - Type: REFINE_COST_EVT_ENRICHED
++        Rate: 50
++    - Level: 10
++      Chances:
++      - Type: REFINE_COST_NORMAL
++        Rate: 9
++      - Type: REFINE_COST_ENRICHED
++        Rate: 20
++      - Type: REFINE_COST_EVT_ENRICHED
++        Rate: 35
+ WeaponLv1:
+   StatsPerLevel: 200
+   RandomBonusStartLevel: 8
+@@ -71,22 +221,91 @@
+     - Type: REFINE_COST_ENRICHED
+       Price: 2000
+       Material: 7620
++    - Type: REFINE_COST_EVT_ENRICHED
++      Price: 2000
++      Material: 7620
++      RefineUI: false
+   Rates:
++    - Level: 1
++      Chances:
++      - Type: REFINE_COST_NORMAL
++        Rate: 100
++      - Type: REFINE_COST_ENRICHED
++        Rate: 100
++      - Type: REFINE_COST_EVT_ENRICHED
++        Rate: 100
++    - Level: 2
++      Chances:
++      - Type: REFINE_COST_NORMAL
++        Rate: 100
++      - Type: REFINE_COST_ENRICHED
++        Rate: 100
++      - Type: REFINE_COST_EVT_ENRICHED
++        Rate: 100
++    - Level: 3
++      Chances:
++      - Type: REFINE_COST_NORMAL
++        Rate: 100
++      - Type: REFINE_COST_ENRICHED
++        Rate: 100
++      - Type: REFINE_COST_EVT_ENRICHED
++        Rate: 100
++    - Level: 4
++      Chances:
++      - Type: REFINE_COST_NORMAL
++        Rate: 100
++      - Type: REFINE_COST_ENRICHED
++        Rate: 100
++      - Type: REFINE_COST_EVT_ENRICHED
++        Rate: 100
++    - Level: 5
++      Chances:
++      - Type: REFINE_COST_NORMAL
++        Rate: 100
++      - Type: REFINE_COST_ENRICHED
++        Rate: 100
++      - Type: REFINE_COST_EVT_ENRICHED
++        Rate: 100
++    - Level: 6
++      Chances:
++      - Type: REFINE_COST_NORMAL
++        Rate: 100
++      - Type: REFINE_COST_ENRICHED
++        Rate: 100
++      - Type: REFINE_COST_EVT_ENRICHED
++        Rate: 100
++    - Level: 7
++      Chances:
++      - Type: REFINE_COST_NORMAL
++        Rate: 100
++      - Type: REFINE_COST_ENRICHED
++        Rate: 100
++      - Type: REFINE_COST_EVT_ENRICHED
++        Rate: 100
+     - Level: 8
+-      NormalChance: 60
+-      EnrichedChance: 90
+-      EventNormalChance: 60
+-      EventEnrichedChance: 95
++      Chances:
++      - Type: REFINE_COST_NORMAL
++        Rate: 60
++      - Type: REFINE_COST_ENRICHED
++        Rate: 90
++      - Type: REFINE_COST_EVT_ENRICHED
++        Rate: 95
+     - Level: 9
+-      NormalChance: 40
+-      EnrichedChance: 70
+-      EventNormalChance: 40
+-      EventEnrichedChance: 85
++      Chances:
++      - Type: REFINE_COST_NORMAL
++        Rate: 40
++      - Type: REFINE_COST_ENRICHED
++        Rate: 70
++      - Type: REFINE_COST_EVT_ENRICHED
++        Rate: 85
+     - Level: 10
+-      NormalChance: 19
+-      EnrichedChance: 30
+-      EventNormalChance: 19
+-      EventEnrichedChance: 55
++      Chances:
++      - Type: REFINE_COST_NORMAL
++        Rate: 19
++      - Type: REFINE_COST_ENRICHED
++        Rate: 30
++      - Type: REFINE_COST_EVT_ENRICHED
++        Rate: 55
+ WeaponLv2:
+   StatsPerLevel: 300
+   RandomBonusStartLevel: 7
+@@ -98,27 +317,91 @@
+     - Type: REFINE_COST_ENRICHED
+       Price: 2000
+       Material: 7620
++    - Type: REFINE_COST_EVT_ENRICHED
++      Price: 2000
++      Material: 7620
++      RefineUI: false
+   Rates:
++    - Level: 1
++      Chances:
++      - Type: REFINE_COST_NORMAL
++        Rate: 100
++      - Type: REFINE_COST_ENRICHED
++        Rate: 100
++      - Type: REFINE_COST_EVT_ENRICHED
++        Rate: 100
++    - Level: 2
++      Chances:
++      - Type: REFINE_COST_NORMAL
++        Rate: 100
++      - Type: REFINE_COST_ENRICHED
++        Rate: 100
++      - Type: REFINE_COST_EVT_ENRICHED
++        Rate: 100
++    - Level: 3
++      Chances:
++      - Type: REFINE_COST_NORMAL
++        Rate: 100
++      - Type: REFINE_COST_ENRICHED
++        Rate: 100
++      - Type: REFINE_COST_EVT_ENRICHED
++        Rate: 100
++    - Level: 4
++      Chances:
++      - Type: REFINE_COST_NORMAL
++        Rate: 100
++      - Type: REFINE_COST_ENRICHED
++        Rate: 100
++      - Type: REFINE_COST_EVT_ENRICHED
++        Rate: 100
++    - Level: 5
++      Chances:
++      - Type: REFINE_COST_NORMAL
++        Rate: 100
++      - Type: REFINE_COST_ENRICHED
++        Rate: 100
++      - Type: REFINE_COST_EVT_ENRICHED
++        Rate: 100
++    - Level: 6
++      Chances:
++      - Type: REFINE_COST_NORMAL
++        Rate: 100
++      - Type: REFINE_COST_ENRICHED
++        Rate: 100
++      - Type: REFINE_COST_EVT_ENRICHED
++        Rate: 100
+     - Level: 7
+-      NormalChance: 60
+-      EnrichedChance: 90
+-      EventNormalChance: 60
+-      EventEnrichedChance: 95
++      Chances:
++      - Type: REFINE_COST_NORMAL
++        Rate: 60
++      - Type: REFINE_COST_ENRICHED
++        Rate: 90
++      - Type: REFINE_COST_EVT_ENRICHED
++        Rate: 95
+     - Level: 8
+-      NormalChance: 40
+-      EnrichedChance: 70
+-      EventNormalChance: 40
+-      EventEnrichedChance: 85
++      Chances:
++      - Type: REFINE_COST_NORMAL
++        Rate: 40
++      - Type: REFINE_COST_ENRICHED
++        Rate: 70
++      - Type: REFINE_COST_EVT_ENRICHED
++        Rate: 85
+     - Level: 9
+-      NormalChance: 20
+-      EnrichedChance: 40
+-      EventNormalChance: 20
+-      EventEnrichedChance: 60
++      Chances:
++      - Type: REFINE_COST_NORMAL
++        Rate: 20
++      - Type: REFINE_COST_ENRICHED
++        Rate: 40
++      - Type: REFINE_COST_EVT_ENRICHED
++        Rate: 60
+     - Level: 10
+-      NormalChance: 19
+-      EnrichedChance: 30
+-      EventNormalChance: 19
+-      EventEnrichedChance: 45
++      Chances:
++      - Type: REFINE_COST_NORMAL
++        Rate: 19
++      - Type: REFINE_COST_ENRICHED
++        Rate: 30
++      - Type: REFINE_COST_EVT_ENRICHED
++        Rate: 45
+ WeaponLv3:
+   StatsPerLevel: 500
+   RandomBonusStartLevel: 6
+@@ -130,32 +413,91 @@
+     - Type: REFINE_COST_ENRICHED
+       Price: 2000
+       Material: 7620
++    - Type: REFINE_COST_EVT_ENRICHED
++      Price: 2000
++      Material: 7620
++      RefineUI: false
+   Rates:
++    - Level: 1
++      Chances:
++      - Type: REFINE_COST_NORMAL
++        Rate: 100
++      - Type: REFINE_COST_ENRICHED
++        Rate: 100
++      - Type: REFINE_COST_EVT_ENRICHED
++        Rate: 100
++    - Level: 2
++      Chances:
++      - Type: REFINE_COST_NORMAL
++        Rate: 100
++      - Type: REFINE_COST_ENRICHED
++        Rate: 100
++      - Type: REFINE_COST_EVT_ENRICHED
++        Rate: 100
++    - Level: 3
++      Chances:
++      - Type: REFINE_COST_NORMAL
++        Rate: 100
++      - Type: REFINE_COST_ENRICHED
++        Rate: 100
++      - Type: REFINE_COST_EVT_ENRICHED
++        Rate: 100
++    - Level: 4
++      Chances:
++      - Type: REFINE_COST_NORMAL
++        Rate: 100
++      - Type: REFINE_COST_ENRICHED
++        Rate: 100
++      - Type: REFINE_COST_EVT_ENRICHED
++        Rate: 100
++    - Level: 5
++      Chances:
++      - Type: REFINE_COST_NORMAL
++        Rate: 100
++      - Type: REFINE_COST_ENRICHED
++        Rate: 100
++      - Type: REFINE_COST_EVT_ENRICHED
++        Rate: 100
+     - Level: 6
+-      NormalChance: 60
+-      EnrichedChance: 90
+-      EventNormalChance: 60
+-      EventEnrichedChance: 95
++      Chances:
++      - Type: REFINE_COST_NORMAL
++        Rate: 60
++      - Type: REFINE_COST_ENRICHED
++        Rate: 90
++      - Type: REFINE_COST_EVT_ENRICHED
++        Rate: 95
+     - Level: 7
+-      NormalChance: 50
+-      EnrichedChance: 80
+-      EventNormalChance: 50
+-      EventEnrichedChance: 90
++      Chances:
++      - Type: REFINE_COST_NORMAL
++        Rate: 50
++      - Type: REFINE_COST_ENRICHED
++        Rate: 80
++      - Type: REFINE_COST_EVT_ENRICHED
++        Rate: 90
+     - Level: 8
+-      NormalChance: 20
+-      EnrichedChance: 40
+-      EventNormalChance: 20
+-      EventEnrichedChance: 70
++      Chances:
++      - Type: REFINE_COST_NORMAL
++        Rate: 20
++      - Type: REFINE_COST_ENRICHED
++        Rate: 40
++      - Type: REFINE_COST_EVT_ENRICHED
++        Rate: 70
+     - Level: 9
+-      NormalChance: 20
+-      EnrichedChance: 40
+-      EventNormalChance: 20
+-      EventEnrichedChance: 60
++      Chances:
++      - Type: REFINE_COST_NORMAL
++        Rate: 20
++      - Type: REFINE_COST_ENRICHED
++        Rate: 40
++      - Type: REFINE_COST_EVT_ENRICHED
++        Rate: 60
+     - Level: 10
+-      NormalChance: 19
+-      EnrichedChance: 30
+-      EventNormalChance: 19
+-      EventEnrichedChance: 45
++      Chances:
++      - Type: REFINE_COST_NORMAL
++        Rate: 19
++      - Type: REFINE_COST_ENRICHED
++        Rate: 30
++      - Type: REFINE_COST_EVT_ENRICHED
++        Rate: 45
+ WeaponLv4:
+   StatsPerLevel: 700
+   RandomBonusStartLevel: 5
+@@ -167,69 +509,305 @@
+     - Type: REFINE_COST_ENRICHED
+       Price: 2000
+       Material: 7620
++    - Type: REFINE_COST_EVT_ENRICHED
++      Price: 2000
++      Material: 7620
++      RefineUI: false
+   Rates:
++    - Level: 1
++      Chances:
++      - Type: REFINE_COST_NORMAL
++        Rate: 100
++      - Type: REFINE_COST_ENRICHED
++        Rate: 100
++      - Type: REFINE_COST_EVT_ENRICHED
++        Rate: 100
++    - Level: 2
++      Chances:
++      - Type: REFINE_COST_NORMAL
++        Rate: 100
++      - Type: REFINE_COST_ENRICHED
++        Rate: 100
++      - Type: REFINE_COST_EVT_ENRICHED
++        Rate: 100
++    - Level: 3
++      Chances:
++      - Type: REFINE_COST_NORMAL
++        Rate: 100
++      - Type: REFINE_COST_ENRICHED
++        Rate: 100
++      - Type: REFINE_COST_EVT_ENRICHED
++        Rate: 100
++    - Level: 4
++      Chances:
++      - Type: REFINE_COST_NORMAL
++        Rate: 100
++      - Type: REFINE_COST_ENRICHED
++        Rate: 100
++      - Type: REFINE_COST_EVT_ENRICHED
++        Rate: 100
+     - Level: 5
+-      NormalChance: 60
+-      EnrichedChance: 90
+-      EventNormalChance: 60
+-      EventEnrichedChance: 95
++      Chances:
++      - Type: REFINE_COST_NORMAL
++        Rate: 60
++      - Type: REFINE_COST_ENRICHED
++        Rate: 90
++      - Type: REFINE_COST_EVT_ENRICHED
++        Rate: 95
+     - Level: 6
+-      NormalChance: 40
+-      EnrichedChance: 70
+-      EventNormalChance: 40
+-      EventEnrichedChance: 80
++      Chances:
++      - Type: REFINE_COST_NORMAL
++        Rate: 40
++      - Type: REFINE_COST_ENRICHED
++        Rate: 70
++      - Type: REFINE_COST_EVT_ENRICHED
++        Rate: 80
+     - Level: 7
+-      NormalChance: 40
+-      EnrichedChance: 70
+-      EventNormalChance: 40
+-      EventEnrichedChance: 80
++      Chances:
++      - Type: REFINE_COST_NORMAL
++        Rate: 40
++      - Type: REFINE_COST_ENRICHED
++        Rate: 70
++      - Type: REFINE_COST_EVT_ENRICHED
++        Rate: 80
+     - Level: 8
+-      NormalChance: 20
+-      EnrichedChance: 40
+-      EventNormalChance: 20
+-      EventEnrichedChance: 60
++      Chances:
++      - Type: REFINE_COST_NORMAL
++        Rate: 20
++      - Type: REFINE_COST_ENRICHED
++        Rate: 40
++      - Type: REFINE_COST_EVT_ENRICHED
++        Rate: 60
+     - Level: 9
+-      NormalChance: 20
+-      EnrichedChance: 40
+-      EventNormalChance: 20
+-      EventEnrichedChance: 50
++      Chances:
++      - Type: REFINE_COST_NORMAL
++        Rate: 20
++      - Type: REFINE_COST_ENRICHED
++        Rate: 40
++      - Type: REFINE_COST_EVT_ENRICHED
++        Rate: 50
+     - Level: 10
+-      NormalChance: 9
+-      EnrichedChance: 20
+-      EventNormalChance: 9
+-      EventEnrichedChance: 35
++      Chances:
++      - Type: REFINE_COST_NORMAL
++        Rate: 9
++      - Type: REFINE_COST_ENRICHED
++        Rate: 20
++      - Type: REFINE_COST_EVT_ENRICHED
++        Rate: 35
+ Shadow:
+   StatsPerLevel: 0
+   RandomBonusStartLevel: 0
+   RandomBonusValue: 0
++  Costs:
++    - Type: REFINE_COST_NORMAL
++      Price: 20000
++      Material: 985
++      RefineUI: true
++    - Type: REFINE_COST_HD
++      Price: 20000
++      Material: 6241
++      RefineUI: true
++      OnFail:
++        Break: 0
++        DownRefine: 100
++        DownRefineNum: 1
++    - Type: REFINE_COST_ENRICHED
++      Price: 20000
++      Material: 7619
++      RefineUI: true
++    # 'Event' rates
++    - Type: REFINE_COST_EVT_ENRICHED
++      Price: 20000
++      Material: 7619
++      RefineUI: false
+   Rates:
++    - Level: 1
++      Chances:
++      - Type: REFINE_COST_NORMAL
++        Rate: 100
++      - Type: REFINE_COST_ENRICHED
++        Rate: 100
++      - Type: REFINE_COST_EVT_ENRICHED
++        Rate: 100
++    - Level: 2
++      Chances:
++      - Type: REFINE_COST_NORMAL
++        Rate: 100
++      - Type: REFINE_COST_ENRICHED
++        Rate: 100
++      - Type: REFINE_COST_EVT_ENRICHED
++        Rate: 100
++    - Level: 3
++      Chances:
++      - Type: REFINE_COST_NORMAL
++        Rate: 100
++      - Type: REFINE_COST_ENRICHED
++        Rate: 100
++      - Type: REFINE_COST_EVT_ENRICHED
++        Rate: 100
++    - Level: 4
++      Chances:
++      - Type: REFINE_COST_NORMAL
++        Rate: 100
++      - Type: REFINE_COST_ENRICHED
++        Rate: 100
++      - Type: REFINE_COST_EVT_ENRICHED
++        Rate: 100
+     - Level: 5
+-      NormalChance: 60
+-      EnrichedChance: 90
+-      EventNormalChance: 60
+-      EventEnrichedChance: 95
++      Chances:
++      - Type: REFINE_COST_NORMAL
++        Rate: 60
++      - Type: REFINE_COST_ENRICHED
++        Rate: 90
++      - Type: REFINE_COST_EVT_ENRICHED
++        Rate: 95
+     - Level: 6
+-      NormalChance: 40
+-      EnrichedChance: 70
+-      EventNormalChance: 40
+-      EventEnrichedChance: 80
++      Chances:
++      - Type: REFINE_COST_NORMAL
++        Rate: 40
++      - Type: REFINE_COST_ENRICHED
++        Rate: 70
++      - Type: REFINE_COST_EVT_ENRICHED
++        Rate: 80
+     - Level: 7
+-      NormalChance: 40
+-      EnrichedChance: 70
+-      EventNormalChance: 40
+-      EventEnrichedChance: 80
++      Chances:
++      - Type: REFINE_COST_NORMAL
++        Rate: 40
++      - Type: REFINE_COST_ENRICHED
++        Rate: 70
++      - Type: REFINE_COST_EVT_ENRICHED
++        Rate: 80
+     - Level: 8
+-      NormalChance: 20
+-      EnrichedChance: 40
+-      EventNormalChance: 20
+-      EventEnrichedChance: 50
++      Chances:
++      - Type: REFINE_COST_NORMAL
++        Rate: 20
++      - Type: REFINE_COST_ENRICHED
++        Rate: 40
++      - Type: REFINE_COST_EVT_ENRICHED
++        Rate: 50
+     - Level: 9
+-      NormalChance: 20
+-      EnrichedChance: 40
+-      EventNormalChance: 20
+-      EventEnrichedChance: 50
++      Chances:
++      - Type: REFINE_COST_NORMAL
++        Rate: 20
++      - Type: REFINE_COST_ENRICHED
++        Rate: 40
++      - Type: REFINE_COST_EVT_ENRICHED
++        Rate: 50
+     - Level: 10
+-      NormalChance: 9
+-      EnrichedChance: 20
+-      EventNormalChance: 9
+-      EventEnrichedChance: 35
++      Chances:
++      - Type: REFINE_COST_NORMAL
++        Rate: 9
++      - Type: REFINE_COST_ENRICHED
++        Rate: 20
++      - Type: REFINE_COST_EVT_ENRICHED
++        Rate: 35
++ShadowWeapon:
++  StatsPerLevel: 0
++  RandomBonusStartLevel: 0
++  RandomBonusValue: 0
++  Costs:
++    - Type: REFINE_COST_NORMAL
++      Price: 20000
++      Material: 984
++    - Type: REFINE_COST_HD
++      Price: 20000
++      Material: 6240
++      OnFail:
++        Break: 0
++        DownRefine: 100
++        DownRefineNum: 1
++    - Type: REFINE_COST_ENRICHED
++      Price: 2000
++      Material: 7620
++    # 'Event' rates
++    - Type: REFINE_COST_EVT_ENRICHED
++      Price: 2000
++      Material: 7620
++      RefineUI: false
++  Rates:
++    - Level: 1
++      Chances:
++      - Type: REFINE_COST_NORMAL
++        Rate: 100
++      - Type: REFINE_COST_ENRICHED
++        Rate: 100
++      - Type: REFINE_COST_EVT_ENRICHED
++        Rate: 100
++    - Level: 2
++      Chances:
++      - Type: REFINE_COST_NORMAL
++        Rate: 100
++      - Type: REFINE_COST_ENRICHED
++        Rate: 100
++      - Type: REFINE_COST_EVT_ENRICHED
++        Rate: 100
++    - Level: 3
++      Chances:
++      - Type: REFINE_COST_NORMAL
++        Rate: 100
++      - Type: REFINE_COST_ENRICHED
++        Rate: 100
++      - Type: REFINE_COST_EVT_ENRICHED
++        Rate: 100
++    - Level: 4
++      Chances:
++      - Type: REFINE_COST_NORMAL
++        Rate: 100
++      - Type: REFINE_COST_ENRICHED
++        Rate: 100
++      - Type: REFINE_COST_EVT_ENRICHED
++        Rate: 100
++    - Level: 5
++      Chances:
++      - Type: REFINE_COST_NORMAL
++        Rate: 60
++      - Type: REFINE_COST_ENRICHED
++        Rate: 90
++      - Type: REFINE_COST_EVT_ENRICHED
++        Rate: 95
++    - Level: 6
++      Chances:
++      - Type: REFINE_COST_NORMAL
++        Rate: 40
++      - Type: REFINE_COST_ENRICHED
++        Rate: 70
++      - Type: REFINE_COST_EVT_ENRICHED
++        Rate: 80
++    - Level: 7
++      Chances:
++      - Type: REFINE_COST_NORMAL
++        Rate: 40
++      - Type: REFINE_COST_ENRICHED
++        Rate: 70
++      - Type: REFINE_COST_EVT_ENRICHED
++        Rate: 80
++    - Level: 8
++      Chances:
++      - Type: REFINE_COST_NORMAL
++        Rate: 20
++      - Type: REFINE_COST_HD
++        Rate: 20
++      - Type: REFINE_COST_ENRICHED
++        Rate: 40
++      - Type: REFINE_COST_EVT_ENRICHED
++        Rate: 60
++    - Level: 9
++      Chances:
++      - Type: REFINE_COST_NORMAL
++        Rate: 20
++      - Type: REFINE_COST_HD
++        Rate: 20
++      - Type: REFINE_COST_ENRICHED
++        Rate: 40
++      - Type: REFINE_COST_EVT_ENRICHED
++        Rate: 50
++    - Level: 10
++      Chances:
++      - Type: REFINE_COST_NORMAL
++        Rate: 9
++      - Type: REFINE_COST_HD
++        Rate: 9
++      - Type: REFINE_COST_ENRICHED
++        Rate: 20
++      - Type: REFINE_COST_EVT_ENRICHED
++        Rate: 35
+Index: db/re/refine_db.yml
+===================================================================
+--- db/re/refine_db.yml	(revisão 65528)
++++ db/re/refine_db.yml	(cópia de trabalho)
+@@ -29,9 +29,17 @@
+     - Type: REFINE_COST_OVER10
+       Price: 100000
+       Material: 6223
++      OnFail:
++        Break: 80
++        DownRefine: 20
++        DownRefineNum: 3
+     - Type: REFINE_COST_HD
+       Price: 20000
+       Material: 6241
++      OnFail:
++        Break: 0
++        DownRefine: 100
++        DownRefineNum: 1
+     - Type: REFINE_COST_ENRICHED
+       Price: 2000
+       Material: 7619
+@@ -38,117 +46,514 @@
+     - Type: REFINE_COST_OVER10_HD
+       Price: 100000
+       Material: 6225
++      OnFail:
++        Break: 0
++        DownRefine: 100
++        DownRefineNum: 1
+     - Type: REFINE_COST_HOLINK
+       Price: 15000
+       Material: 7619
++      RefineUI: false
+     - Type: REFINE_COST_WAGJAK
+       Price: 20000
+       Material: 985
++      RefineUI: false
++    - Type: REFINE_COST_BLESSED
++      Price: 20000
++      Material: 6439
++      RefineUI: false
++      OnFail:
++        Break: 0
++        DownRefine: 0
++    # 'Event' rates
++    - Type: REFINE_COST_EVT_OVER10_HD
++      Price: 100000
++      Material: 6225
++      RefineUI: false
++      OnFail:
++        Break: 0
++        DownRefine: 100
++        DownRefineNum: 1
++    - Type: REFINE_COST_EVT_ENRICHED
++      Price: 2000
++      Material: 7619
++      RefineUI: false
+   Rates:
+     - Level: 1
++      Chances:
++      - Type: REFINE_COST_NORMAL
++        Rate: 100
++      - Type: REFINE_COST_ENRICHED
++        Rate: 100
+       Bonus: 100
+     - Level: 2
++      Chances:
++      - Type: REFINE_COST_NORMAL
++        Rate: 100
++      - Type: REFINE_COST_ENRICHED
++        Rate: 100
+       Bonus: 100
+     - Level: 3
++      Chances:
++      - Type: REFINE_COST_NORMAL
++        Rate: 100
++      - Type: REFINE_COST_ENRICHED
++        Rate: 100
+       Bonus: 100
+     - Level: 4
++      Chances:
++      - Type: REFINE_COST_NORMAL
++        Rate: 100
++      - Type: REFINE_COST_ENRICHED
++        Rate: 100
+       Bonus: 100
+     - Level: 5
+-      NormalChance: 60
+-      EnrichedChance: 90
+-      EventNormalChance: 60
+-      EventEnrichedChance: 95
++      Chances:
++      - Type: REFINE_COST_NORMAL
++        Rate: 60
++      - Type: REFINE_COST_ENRICHED
++        Rate: 90
++      - Type: REFINE_COST_EVT_ENRICHED
++        Rate: 95
+       Bonus: 200
+     - Level: 6
+-      NormalChance: 40
+-      EnrichedChance: 70
+-      EventNormalChance: 40
+-      EventEnrichedChance: 80
++      Chances:
++      - Type: REFINE_COST_NORMAL
++        Rate: 40
++      - Type: REFINE_COST_ENRICHED
++        Rate: 70
++      - Type: REFINE_COST_EVT_ENRICHED
++        Rate: 80
+       Bonus: 200
+     - Level: 7
+-      NormalChance: 40
+-      EnrichedChance: 70
+-      EventNormalChance: 40
+-      EventEnrichedChance: 80
++      Chances:
++      - Type: REFINE_COST_NORMAL
++        Rate: 40
++      - Type: REFINE_COST_ENRICHED
++        Rate: 70
++      - Type: REFINE_COST_BLESSED
++        Rate: 40
++      - Type: REFINE_COST_EVT_ENRICHED
++        Rate: 80
+       Bonus: 200
+     - Level: 8
+-      NormalChance: 20
+-      EnrichedChance: 40
+-      EventNormalChance: 20
+-      EventEnrichedChance: 50
++      Chances:
++      - Type: REFINE_COST_NORMAL
++        Rate: 20
++      - Type: REFINE_COST_HD
++        Rate: 20
++      - Type: REFINE_COST_ENRICHED
++        Rate: 40
++      - Type: REFINE_COST_BLESSED
++        Rate: 20
++      - Type: REFINE_COST_EVT_ENRICHED
++        Rate: 50
+       Bonus: 200
++      BlacksmithBlessing:
++        ItemID: 6635
++        Count: 1
+     - Level: 9
+-      NormalChance: 20
+-      EnrichedChance: 40
+-      EventNormalChance: 20
+-      EventEnrichedChance: 50
++      Chances:
++      - Type: REFINE_COST_NORMAL
++        Rate: 20
++      - Type: REFINE_COST_HD
++        Rate: 20
++      - Type: REFINE_COST_ENRICHED
++        Rate: 40
++      - Type: REFINE_COST_BLESSED
++        Rate: 20
++      - Type: REFINE_COST_EVT_ENRICHED
++        Rate: 50
+       Bonus: 300
++      BlacksmithBlessing:
++        ItemID: 6635
++        Count: 2
+     - Level: 10
+-      NormalChance: 9
+-      EnrichedChance: 20
+-      EventNormalChance: 9
+-      EventEnrichedChance: 35
++      Chances:
++      - Type: REFINE_COST_NORMAL
++        Rate: 9
++      - Type: REFINE_COST_HD
++        Rate: 9
++      - Type: REFINE_COST_ENRICHED
++        Rate: 20
++      - Type: REFINE_COST_BLESSED
++        Rate: 9
++      - Type: REFINE_COST_EVT_ENRICHED
++        Rate: 35
+       Bonus: 300
++      BlacksmithBlessing:
++        ItemID: 6635
++        Count: 4
+     - Level: 11
+-      NormalChance: 8
+-      EnrichedChance: 8
+-      EventNormalChance: 20
+-      EventEnrichedChance: 20
++      Chances:
++      - Type: REFINE_COST_OVER10
++        Rate: 8
++      - Type: REFINE_COST_OVER10_HD
++        Rate: 8
++      - Type: REFINE_COST_BLESSED
++        Rate: 8
++      - Type: REFINE_COST_EVT_OVER10_HD
++        Rate: 20
+       Bonus: 300
++      BlacksmithBlessing:
++        ItemID: 6635
++        Count: 7
+     - Level: 12
+-      NormalChance: 8
+-      EnrichedChance: 8
+-      EventNormalChance: 20
+-      EventEnrichedChance: 20
++      Chances:
++      - Type: REFINE_COST_OVER10
++        Rate: 8
++      - Type: REFINE_COST_OVER10_HD
++        Rate: 8
++      - Type: REFINE_COST_BLESSED
++        Rate: 8
++      - Type: REFINE_COST_EVT_OVER10_HD
++        Rate: 20
+       Bonus: 300
++      BlacksmithBlessing:
++        ItemID: 6635
++        Count: 11
+     - Level: 13
+-      NormalChance: 8
+-      EnrichedChance: 8
+-      EventNormalChance: 16
+-      EventEnrichedChance: 16
++      Chances:
++      - Type: REFINE_COST_OVER10
++        Rate: 8
++      - Type: REFINE_COST_OVER10_HD
++        Rate: 8
++      - Type: REFINE_COST_BLESSED
++        Rate: 8
++      - Type: REFINE_COST_EVT_OVER10_HD
++        Rate: 16
+       Bonus: 400
+     - Level: 14
+-      NormalChance: 8
+-      EnrichedChance: 8
+-      EventNormalChance: 16
+-      EventEnrichedChance: 16
++      Chances:
++      - Type: REFINE_COST_OVER10
++        Rate: 8
++      - Type: REFINE_COST_OVER10_HD
++        Rate: 8
++      - Type: REFINE_COST_EVT_OVER10_HD
++        Rate: 16
+       Bonus: 400
+     - Level: 15
+-      NormalChance: 7
+-      EnrichedChance: 7
+-      EventNormalChance: 15
+-      EventEnrichedChance: 15
++      Chances:
++      - Type: REFINE_COST_OVER10
++        Rate: 7
++      - Type: REFINE_COST_OVER10_HD
++        Rate: 7
++      - Type: REFINE_COST_EVT_OVER10_HD
++        Rate: 15
+       Bonus: 400
+     - Level: 16
+-      NormalChance: 7
+-      EnrichedChance: 7
+-      EventNormalChance: 15
+-      EventEnrichedChance: 15
++      Chances:
++      - Type: REFINE_COST_OVER10
++        Rate: 7
++      - Type: REFINE_COST_OVER10_HD
++        Rate: 7
++      - Type: REFINE_COST_EVT_OVER10_HD
++        Rate: 15
+       Bonus: 400
+     - Level: 17
+-      NormalChance: 7
+-      EnrichedChance: 7
+-      EventNormalChance: 14
+-      EventEnrichedChance: 14
++      Chances:
++      - Type: REFINE_COST_OVER10
++        Rate: 7
++      - Type: REFINE_COST_OVER10_HD
++        Rate: 7
++      - Type: REFINE_COST_EVT_OVER10_HD
++        Rate: 14
+       Bonus: 500
+     - Level: 18
+-      NormalChance: 7
+-      EnrichedChance: 7
+-      EventNormalChance: 14
+-      EventEnrichedChance: 14
++      Chances:
++      - Type: REFINE_COST_OVER10
++        Rate: 7
++      - Type: REFINE_COST_OVER10_HD
++        Rate: 7
++      - Type: REFINE_COST_EVT_OVER10_HD
++        Rate: 14
+       Bonus: 500
+     - Level: 19
+-      NormalChance: 5
+-      EnrichedChance: 5
+-      EventNormalChance: 10
+-      EventEnrichedChance: 10
++      Chances:
++      - Type: REFINE_COST_OVER10
++        Rate: 5
++      - Type: REFINE_COST_OVER10_HD
++        Rate: 5
++      - Type: REFINE_COST_EVT_OVER10_HD
++        Rate: 10
+       Bonus: 500
+     - Level: 20
+-      NormalChance: 5
+-      EnrichedChance: 5
+-      EventNormalChance: 10
+-      EventEnrichedChance: 10
++      Chances:
++      - Type: REFINE_COST_OVER10
++        Rate: 5
++      - Type: REFINE_COST_OVER10_HD
++        Rate: 5
++      - Type: REFINE_COST_EVT_OVER10_HD
++        Rate: 10
+       Bonus: 500
++Costume:
++  StatsPerLevel: 0
++  RandomBonusStartLevel: 0
++  RandomBonusValue: 0
++  Costs:
++    - Type: REFINE_COST_NORMAL
++      Price: 2000
++      Material: 985
++    - Type: REFINE_COST_OVER10
++      Price: 100000
++      Material: 6223
++      OnFail:
++        Break: 80
++        DownRefine: 20
++        DownRefineNum: 3
++    - Type: REFINE_COST_HD
++      Price: 20000
++      Material: 6241
++      OnFail:
++        Break: 0
++        DownRefine: 100
++        DownRefineNum: 1
++    - Type: REFINE_COST_ENRICHED
++      Price: 2000
++      Material: 7619
++    - Type: REFINE_COST_OVER10_HD
++      Price: 100000
++      Material: 6225
++      OnFail:
++        Break: 0
++        DownRefine: 100
++        DownRefineNum: 1
++    - Type: REFINE_COST_HOLINK
++      Price: 15000
++      Material: 7619
++      RefineUI: false
++    - Type: REFINE_COST_WAGJAK
++      Price: 20000
++      Material: 985
++      RefineUI: false
++    - Type: REFINE_COST_BLESSED
++      Price: 20000
++      Material: 6439
++      RefineUI: false
++      OnFail:
++        Break: 0
++        DownRefine: 0
++    # 'Event' rates
++    - Type: REFINE_COST_EVT_OVER10_HD
++      Price: 100000
++      Material: 6225
++      RefineUI: false
++      OnFail:
++        Break: 0
++        DownRefine: 100
++        DownRefineNum: 1
++    - Type: REFINE_COST_EVT_ENRICHED
++      Price: 2000
++      Material: 7619
++      RefineUI: false
++  Rates:
++    - Level: 1
++      Chances:
++      - Type: REFINE_COST_NORMAL
++        Rate: 100
++      - Type: REFINE_COST_ENRICHED
++        Rate: 100
++      Bonus: 100
++    - Level: 2
++      Chances:
++      - Type: REFINE_COST_NORMAL
++        Rate: 100
++      - Type: REFINE_COST_ENRICHED
++        Rate: 100
++      Bonus: 100
++    - Level: 3
++      Chances:
++      - Type: REFINE_COST_NORMAL
++        Rate: 100
++      - Type: REFINE_COST_ENRICHED
++        Rate: 100
++      Bonus: 100
++    - Level: 4
++      Chances:
++      - Type: REFINE_COST_NORMAL
++        Rate: 100
++      - Type: REFINE_COST_ENRICHED
++        Rate: 100
++      Bonus: 100
++    - Level: 5
++      Chances:
++      - Type: REFINE_COST_NORMAL
++        Rate: 60
++      - Type: REFINE_COST_ENRICHED
++        Rate: 90
++      - Type: REFINE_COST_EVT_ENRICHED
++        Rate: 95
++      Bonus: 200
++    - Level: 6
++      Chances:
++      - Type: REFINE_COST_NORMAL
++        Rate: 40
++      - Type: REFINE_COST_ENRICHED
++        Rate: 70
++      - Type: REFINE_COST_EVT_ENRICHED
++        Rate: 80
++      Bonus: 200
++    - Level: 7
++      Chances:
++      - Type: REFINE_COST_NORMAL
++        Rate: 40
++      - Type: REFINE_COST_ENRICHED
++        Rate: 70
++      - Type: REFINE_COST_BLESSED
++        Rate: 40
++      - Type: REFINE_COST_EVT_ENRICHED
++        Rate: 80
++      Bonus: 200
++    - Level: 8
++      Chances:
++      - Type: REFINE_COST_NORMAL
++        Rate: 20
++      - Type: REFINE_COST_HD
++        Rate: 20
++      - Type: REFINE_COST_ENRICHED
++        Rate: 40
++      - Type: REFINE_COST_BLESSED
++        Rate: 20
++      - Type: REFINE_COST_EVT_ENRICHED
++        Rate: 50
++      Bonus: 200
++      BlacksmithBlessing:
++        ItemID: 6635
++        Count: 1
++    - Level: 9
++      Chances:
++      - Type: REFINE_COST_NORMAL
++        Rate: 20
++      - Type: REFINE_COST_HD
++        Rate: 20
++      - Type: REFINE_COST_ENRICHED
++        Rate: 40
++      - Type: REFINE_COST_BLESSED
++        Rate: 20
++      - Type: REFINE_COST_EVT_ENRICHED
++        Rate: 50
++      Bonus: 300
++      BlacksmithBlessing:
++        ItemID: 6635
++        Count: 2
++    - Level: 10
++      Chances:
++      - Type: REFINE_COST_NORMAL
++        Rate: 9
++      - Type: REFINE_COST_HD
++        Rate: 9
++      - Type: REFINE_COST_ENRICHED
++        Rate: 20
++      - Type: REFINE_COST_BLESSED
++        Rate: 9
++      - Type: REFINE_COST_EVT_ENRICHED
++        Rate: 35
++      Bonus: 300
++      BlacksmithBlessing:
++        ItemID: 6635
++        Count: 4
++    - Level: 11
++      Chances:
++      - Type: REFINE_COST_OVER10
++        Rate: 8
++      - Type: REFINE_COST_OVER10_HD
++        Rate: 8
++      - Type: REFINE_COST_BLESSED
++        Rate: 8
++      - Type: REFINE_COST_EVT_OVER10_HD
++        Rate: 20
++      Bonus: 300
++      BlacksmithBlessing:
++        ItemID: 6635
++        Count: 7
++    - Level: 12
++      Chances:
++      - Type: REFINE_COST_OVER10
++        Rate: 8
++      - Type: REFINE_COST_OVER10_HD
++        Rate: 8
++      - Type: REFINE_COST_BLESSED
++        Rate: 8
++      - Type: REFINE_COST_EVT_OVER10_HD
++        Rate: 20
++      Bonus: 300
++      BlacksmithBlessing:
++        ItemID: 6635
++        Count: 11
++    - Level: 13
++      Chances:
++      - Type: REFINE_COST_OVER10
++        Rate: 8
++      - Type: REFINE_COST_OVER10_HD
++        Rate: 8
++      - Type: REFINE_COST_BLESSED
++        Rate: 8
++      - Type: REFINE_COST_EVT_OVER10_HD
++        Rate: 16
++      Bonus: 400
++    - Level: 14
++      Chances:
++      - Type: REFINE_COST_OVER10
++        Rate: 8
++      - Type: REFINE_COST_OVER10_HD
++        Rate: 8
++      - Type: REFINE_COST_EVT_OVER10_HD
++        Rate: 16
++      Bonus: 400
++    - Level: 15
++      Chances:
++      - Type: REFINE_COST_OVER10
++        Rate: 7
++      - Type: REFINE_COST_OVER10_HD
++        Rate: 7
++      - Type: REFINE_COST_EVT_OVER10_HD
++        Rate: 15
++      Bonus: 400
++    - Level: 16
++      Chances:
++      - Type: REFINE_COST_OVER10
++        Rate: 7
++      - Type: REFINE_COST_OVER10_HD
++        Rate: 7
++      - Type: REFINE_COST_EVT_OVER10_HD
++        Rate: 15
++      Bonus: 400
++    - Level: 17
++      Chances:
++      - Type: REFINE_COST_OVER10
++        Rate: 7
++      - Type: REFINE_COST_OVER10_HD
++        Rate: 7
++      - Type: REFINE_COST_EVT_OVER10_HD
++        Rate: 14
++      Bonus: 500
++    - Level: 18
++      Chances:
++      - Type: REFINE_COST_OVER10
++        Rate: 7
++      - Type: REFINE_COST_OVER10_HD
++        Rate: 7
++      - Type: REFINE_COST_EVT_OVER10_HD
++        Rate: 14
++      Bonus: 500
++    - Level: 19
++      Chances:
++      - Type: REFINE_COST_OVER10
++        Rate: 5
++      - Type: REFINE_COST_OVER10_HD
++        Rate: 5
++      - Type: REFINE_COST_EVT_OVER10_HD
++        Rate: 10
++      Bonus: 500
++    - Level: 20
++      Chances:
++      - Type: REFINE_COST_OVER10
++        Rate: 5
++      - Type: REFINE_COST_OVER10_HD
++        Rate: 5
++      - Type: REFINE_COST_EVT_OVER10_HD
++        Rate: 10
++      Bonus: 500
+ WeaponLv1:
+   StatsPerLevel: 200
+   RandomBonusStartLevel: 8
+@@ -160,9 +565,17 @@
+     - Type: REFINE_COST_OVER10
+       Price: 100000
+       Material: 6224
++      OnFail:
++        Break: 80
++        DownRefine: 20
++        DownRefineNum: 3
+     - Type: REFINE_COST_HD
+       Price: 20000
+       Material: 6240
++      OnFail:
++        Break: 0
++        DownRefine: 100
++        DownRefineNum: 1
+     - Type: REFINE_COST_ENRICHED
+       Price: 2000
+       Material: 7620
+@@ -169,82 +582,238 @@
+     - Type: REFINE_COST_OVER10_HD
+       Price: 100000
+       Material: 6226
++      OnFail:
++        Break: 0
++        DownRefine: 100
++        DownRefineNum: 1
+     - Type: REFINE_COST_HOLINK
+       Price: 500
+       Material: 7620
++      RefineUI: false
+     - Type: REFINE_COST_WAGJAK
+       Price: 1000
+       Material: 1010
++      RefineUI: false
++    - Type: REFINE_COST_BLESSED
++      Price: 1000
++      Material: 6438
++      RefineUI: false
++      OnFail:
++        Break: 0
++        DownRefine: 0
++    # 'Event' rates
++    - Type: REFINE_COST_EVT_OVER10_HD
++      Price: 100000
++      Material: 6226
++      RefineUI: false
++      OnFail:
++        Break: 0
++        DownRefine: 100
++        DownRefineNum: 1
++    - Type: REFINE_COST_EVT_ENRICHED
++      Price: 2000
++      Material: 7620
++      RefineUI: false
+   Rates:
++    - Level: 1
++      Chances:
++      - Type: REFINE_COST_NORMAL
++        Rate: 100
++      - Type: REFINE_COST_ENRICHED
++        Rate: 100
++      - Type: REFINE_COST_EVT_ENRICHED
++        Rate: 100
++    - Level: 2
++      Chances:
++      - Type: REFINE_COST_NORMAL
++        Rate: 100
++      - Type: REFINE_COST_ENRICHED
++        Rate: 100
++      - Type: REFINE_COST_EVT_ENRICHED
++        Rate: 100
++    - Level: 3
++      Chances:
++      - Type: REFINE_COST_NORMAL
++        Rate: 100
++      - Type: REFINE_COST_ENRICHED
++        Rate: 100
++      - Type: REFINE_COST_EVT_ENRICHED
++        Rate: 100
++    - Level: 4
++      Chances:
++      - Type: REFINE_COST_NORMAL
++        Rate: 100
++      - Type: REFINE_COST_ENRICHED
++        Rate: 100
++      - Type: REFINE_COST_EVT_ENRICHED
++        Rate: 100
++    - Level: 5
++      Chances:
++      - Type: REFINE_COST_NORMAL
++        Rate: 100
++      - Type: REFINE_COST_ENRICHED
++        Rate: 100
++      - Type: REFINE_COST_EVT_ENRICHED
++        Rate: 100
++    - Level: 6
++      Chances:
++      - Type: REFINE_COST_NORMAL
++        Rate: 100
++      - Type: REFINE_COST_ENRICHED
++        Rate: 100
++      - Type: REFINE_COST_EVT_ENRICHED
++        Rate: 100
++    - Level: 7
++      Chances:
++      - Type: REFINE_COST_NORMAL
++        Rate: 100
++      - Type: REFINE_COST_BLESSED
++        Rate: 100
++      - Type: REFINE_COST_ENRICHED
++        Rate: 100
++      - Type: REFINE_COST_EVT_ENRICHED
++        Rate: 100
+     - Level: 8
+-      NormalChance: 60
+-      EnrichedChance: 90
+-      EventNormalChance: 60
+-      EventEnrichedChance: 95
++      Chances:
++      - Type: REFINE_COST_NORMAL
++        Rate: 60
++      - Type: REFINE_COST_HD
++        Rate: 60
++      - Type: REFINE_COST_BLESSED
++        Rate: 60
++      - Type: REFINE_COST_ENRICHED
++        Rate: 90
++      - Type: REFINE_COST_EVT_ENRICHED
++        Rate: 95
++      BlacksmithBlessing:
++        ItemID: 6635
++        Count: 1
+     - Level: 9
+-      NormalChance: 40
+-      EnrichedChance: 70
+-      EventNormalChance: 40
+-      EventEnrichedChance: 85
++      Chances:
++      - Type: REFINE_COST_NORMAL
++        Rate: 40
++      - Type: REFINE_COST_HD
++        Rate: 40
++      - Type: REFINE_COST_BLESSED
++        Rate: 40
++      - Type: REFINE_COST_ENRICHED
++        Rate: 70
++      - Type: REFINE_COST_EVT_ENRICHED
++        Rate: 85
++      BlacksmithBlessing:
++        ItemID: 6635
++        Count: 2
+     - Level: 10
+-      NormalChance: 19
+-      EnrichedChance: 30
+-      EventNormalChance: 19
+-      EventEnrichedChance: 55
++      Chances:
++      - Type: REFINE_COST_NORMAL
++        Rate: 19
++      - Type: REFINE_COST_HD
++        Rate: 19
++      - Type: REFINE_COST_BLESSED
++        Rate: 19
++      - Type: REFINE_COST_ENRICHED
++        Rate: 30
++      - Type: REFINE_COST_EVT_ENRICHED
++        Rate: 55
++      BlacksmithBlessing:
++        ItemID: 6635
++        Count: 4
+     - Level: 11
+-      NormalChance: 18
+-      EnrichedChance: 18
+-      EventNormalChance: 40
+-      EventEnrichedChance: 40
++      Chances:
++      - Type: REFINE_COST_OVER10
++        Rate: 18
++      - Type: REFINE_COST_OVER10_HD
++        Rate: 18
++      - Type: REFINE_COST_BLESSED
++        Rate: 18
++      - Type: REFINE_COST_EVT_OVER10_HD
++        Rate: 40
++      BlacksmithBlessing:
++        ItemID: 6635
++        Count: 7
+     - Level: 12
+-      NormalChance: 18
+-      EnrichedChance: 18
+-      EventNormalChance: 40
+-      EventEnrichedChance: 40
++      Chances:
++      - Type: REFINE_COST_OVER10
++        Rate: 18
++      - Type: REFINE_COST_OVER10_HD
++        Rate: 18
++      - Type: REFINE_COST_BLESSED
++        Rate: 18
++      - Type: REFINE_COST_EVT_OVER10_HD
++        Rate: 40
++      BlacksmithBlessing:
++        ItemID: 6635
++        Count: 11
+     - Level: 13
+-      NormalChance: 18
+-      EnrichedChance: 18
+-      EventNormalChance: 35
+-      EventEnrichedChance: 35
++      Chances:
++      - Type: REFINE_COST_OVER10
++        Rate: 18
++      - Type: REFINE_COST_OVER10_HD
++        Rate: 18
++      - Type: REFINE_COST_BLESSED
++        Rate: 18
++      - Type: REFINE_COST_EVT_OVER10_HD
++        Rate: 35
+     - Level: 14
+-      NormalChance: 18
+-      EnrichedChance: 18
+-      EventNormalChance: 35
+-      EventEnrichedChance: 35
++      Chances:
++      - Type: REFINE_COST_OVER10
++        Rate: 18
++      - Type: REFINE_COST_OVER10_HD
++        Rate: 18
++      - Type: REFINE_COST_EVT_OVER10_HD
++        Rate: 35
+     - Level: 15
+-      NormalChance: 18
+-      EnrichedChance: 18
+-      EventNormalChance: 30
+-      EventEnrichedChance: 30
++      Chances:
++      - Type: REFINE_COST_OVER10
++        Rate: 18
++      - Type: REFINE_COST_OVER10_HD
++        Rate: 18
++      - Type: REFINE_COST_EVT_OVER10_HD
++        Rate: 30
+     - Level: 16
+-      NormalChance: 17
+-      EnrichedChance: 17
+-      EventNormalChance: 30
+-      EventEnrichedChance: 30
++      Chances:
++      - Type: REFINE_COST_OVER10
++        Rate: 17
++      - Type: REFINE_COST_OVER10_HD
++        Rate: 17
++      - Type: REFINE_COST_EVT_OVER10_HD
++        Rate: 30
+       Bonus: 300
+     - Level: 17
+-      NormalChance: 17
+-      EnrichedChance: 17
+-      EventNormalChance: 20
+-      EventEnrichedChance: 20
++      Chances:
++      - Type: REFINE_COST_OVER10
++        Rate: 17
++      - Type: REFINE_COST_OVER10_HD
++        Rate: 17
++      - Type: REFINE_COST_EVT_OVER10_HD
++        Rate: 20
+       Bonus: 300
+     - Level: 18
+-      NormalChance: 17
+-      EnrichedChance: 17
+-      EventNormalChance: 20
+-      EventEnrichedChance: 20
++      Chances:
++      - Type: REFINE_COST_OVER10
++        Rate: 17
++      - Type: REFINE_COST_OVER10_HD
++        Rate: 17
++      - Type: REFINE_COST_EVT_OVER10_HD
++        Rate: 20
+       Bonus: 300
+     - Level: 19
+-      NormalChance: 15
+-      EnrichedChance: 15
+-      EventNormalChance: 15
+-      EventEnrichedChance: 15
++      Chances:
++      - Type: REFINE_COST_OVER10
++        Rate: 15
++      - Type: REFINE_COST_OVER10_HD
++        Rate: 15
++      - Type: REFINE_COST_EVT_OVER10_HD
++        Rate: 15
+       Bonus: 300
+     - Level: 20
+-      NormalChance: 15
+-      EnrichedChance: 15
+-      EventNormalChance: 15
+-      EventEnrichedChance: 15
++      Chances:
++      - Type: REFINE_COST_OVER10
++        Rate: 15
++      - Type: REFINE_COST_OVER10_HD
++        Rate: 15
++      - Type: REFINE_COST_EVT_OVER10_HD
++        Rate: 15
+       Bonus: 300
+ WeaponLv2:
+   StatsPerLevel: 300
+@@ -257,9 +826,17 @@
+     - Type: REFINE_COST_OVER10
+       Price: 100000
+       Material: 6224
++      OnFail:
++        Break: 80
++        DownRefine: 20
++        DownRefineNum: 3
+     - Type: REFINE_COST_HD
+       Price: 20000
+       Material: 6240
++      OnFail:
++        Break: 0
++        DownRefine: 100
++        DownRefineNum: 1
+     - Type: REFINE_COST_ENRICHED
+       Price: 2000
+       Material: 7620
+@@ -266,87 +843,238 @@
+     - Type: REFINE_COST_OVER10_HD
+       Price: 100000
+       Material: 6226
++      OnFail:
++        Break: 0
++        DownRefine: 100
++        DownRefineNum: 1
+     - Type: REFINE_COST_HOLINK
+       Price: 2000
+       Material: 7620
++      RefineUI: false
+     - Type: REFINE_COST_WAGJAK
+       Price: 2000
+       Material: 1011
++      RefineUI: false
++    - Type: REFINE_COST_BLESSED
++      Price: 2000
++      Material: 6438
++      RefineUI: false
++      OnFail:
++        Break: 0
++        DownRefine: 0
++    # 'Event' rates
++    - Type: REFINE_COST_EVT_OVER10_HD
++      Price: 100000
++      Material: 6226
++      RefineUI: false
++      OnFail:
++        Break: 0
++        DownRefine: 100
++        DownRefineNum: 1
++    - Type: REFINE_COST_EVT_ENRICHED
++      Price: 2000
++      Material: 7620
++      RefineUI: false
+   Rates:
++    - Level: 1
++      Chances:
++      - Type: REFINE_COST_NORMAL
++        Rate: 100
++      - Type: REFINE_COST_ENRICHED
++        Rate: 100
++      - Type: REFINE_COST_EVT_ENRICHED
++        Rate: 100
++    - Level: 2
++      Chances:
++      - Type: REFINE_COST_NORMAL
++        Rate: 100
++      - Type: REFINE_COST_ENRICHED
++        Rate: 100
++      - Type: REFINE_COST_EVT_ENRICHED
++        Rate: 100
++    - Level: 3
++      Chances:
++      - Type: REFINE_COST_NORMAL
++        Rate: 100
++      - Type: REFINE_COST_ENRICHED
++        Rate: 100
++      - Type: REFINE_COST_EVT_ENRICHED
++        Rate: 100
++    - Level: 4
++      Chances:
++      - Type: REFINE_COST_NORMAL
++        Rate: 100
++      - Type: REFINE_COST_ENRICHED
++        Rate: 100
++      - Type: REFINE_COST_EVT_ENRICHED
++        Rate: 100
++    - Level: 5
++      Chances:
++      - Type: REFINE_COST_NORMAL
++        Rate: 100
++      - Type: REFINE_COST_ENRICHED
++        Rate: 100
++      - Type: REFINE_COST_EVT_ENRICHED
++        Rate: 100
++    - Level: 6
++      Chances:
++      - Type: REFINE_COST_NORMAL
++        Rate: 100
++      - Type: REFINE_COST_ENRICHED
++        Rate: 100
++      - Type: REFINE_COST_EVT_ENRICHED
++        Rate: 100
+     - Level: 7
+-      NormalChance: 60
+-      EnrichedChance: 90
+-      EventNormalChance: 60
+-      EventEnrichedChance: 95
++      Chances:
++      - Type: REFINE_COST_NORMAL
++        Rate: 60
++      - Type: REFINE_COST_BLESSED
++        Rate: 60
++      - Type: REFINE_COST_ENRICHED
++        Rate: 90
++      - Type: REFINE_COST_EVT_ENRICHED
++        Rate: 95
+     - Level: 8
+-      NormalChance: 40
+-      EnrichedChance: 70
+-      EventNormalChance: 40
+-      EventEnrichedChance: 85
++      Chances:
++      - Type: REFINE_COST_NORMAL
++        Rate: 40
++      - Type: REFINE_COST_HD
++        Rate: 40
++      - Type: REFINE_COST_BLESSED
++        Rate: 40
++      - Type: REFINE_COST_ENRICHED
++        Rate: 70
++      - Type: REFINE_COST_EVT_ENRICHED
++        Rate: 85
++      BlacksmithBlessing:
++        ItemID: 6635
++        Count: 1
+     - Level: 9
+-      NormalChance: 20
+-      EnrichedChance: 40
+-      EventNormalChance: 20
+-      EventEnrichedChance: 60
++      Chances:
++      - Type: REFINE_COST_NORMAL
++        Rate: 20
++      - Type: REFINE_COST_HD
++        Rate: 20
++      - Type: REFINE_COST_BLESSED
++        Rate: 20
++      - Type: REFINE_COST_ENRICHED
++        Rate: 40
++      - Type: REFINE_COST_EVT_ENRICHED
++        Rate: 60
++      BlacksmithBlessing:
++        ItemID: 6635
++        Count: 2
+     - Level: 10
+-      NormalChance: 19
+-      EnrichedChance: 30
+-      EventNormalChance: 19
+-      EventEnrichedChance: 45
++      Chances:
++      - Type: REFINE_COST_NORMAL
++        Rate: 19
++      - Type: REFINE_COST_HD
++        Rate: 19
++      - Type: REFINE_COST_BLESSED
++        Rate: 19
++      - Type: REFINE_COST_ENRICHED
++        Rate: 30
++      - Type: REFINE_COST_EVT_ENRICHED
++        Rate: 45
++      BlacksmithBlessing:
++        ItemID: 6635
++        Count: 4
+     - Level: 11
+-      NormalChance: 18
+-      EnrichedChance: 18
+-      EventNormalChance: 40
+-      EventEnrichedChance: 40
++      Chances:
++      - Type: REFINE_COST_OVER10
++        Rate: 18
++      - Type: REFINE_COST_OVER10_HD
++        Rate: 18
++      - Type: REFINE_COST_BLESSED
++        Rate: 18
++      - Type: REFINE_COST_EVT_OVER10_HD
++        Rate: 40
++      BlacksmithBlessing:
++        ItemID: 6635
++        Count: 7
+     - Level: 12
+-      NormalChance: 18
+-      EnrichedChance: 18
+-      EventNormalChance: 40
+-      EventEnrichedChance: 40
++      Chances:
++      - Type: REFINE_COST_OVER10
++        Rate: 18
++      - Type: REFINE_COST_OVER10_HD
++        Rate: 18
++      - Type: REFINE_COST_BLESSED
++        Rate: 18
++      - Type: REFINE_COST_EVT_OVER10_HD
++        Rate: 40
++      BlacksmithBlessing:
++        ItemID: 6635
++        Count: 11
+     - Level: 13
+-      NormalChance: 18
+-      EnrichedChance: 18
+-      EventNormalChance: 35
+-      EventEnrichedChance: 35
++      Chances:
++      - Type: REFINE_COST_OVER10
++        Rate: 18
++      - Type: REFINE_COST_OVER10_HD
++        Rate: 18
++      - Type: REFINE_COST_BLESSED
++        Rate: 18
++      - Type: REFINE_COST_EVT_OVER10_HD
++        Rate: 35
+     - Level: 14
+-      NormalChance: 18
+-      EnrichedChance: 18
+-      EventNormalChance: 35
+-      EventEnrichedChance: 35
++      Chances:
++      - Type: REFINE_COST_OVER10
++        Rate: 18
++      - Type: REFINE_COST_OVER10_HD
++        Rate: 18
++      - Type: REFINE_COST_EVT_OVER10_HD
++        Rate: 35
+     - Level: 15
+-      NormalChance: 18
+-      EnrichedChance: 18
+-      EventNormalChance: 30
+-      EventEnrichedChance: 30
++      Chances:
++      - Type: REFINE_COST_OVER10
++        Rate: 18
++      - Type: REFINE_COST_OVER10_HD
++        Rate: 18
++      - Type: REFINE_COST_EVT_OVER10_HD
++        Rate: 30
+     - Level: 16
+-      NormalChance: 17
+-      EnrichedChance: 17
+-      EventNormalChance: 30
+-      EventEnrichedChance: 30
++      Chances:
++      - Type: REFINE_COST_OVER10
++        Rate: 17
++      - Type: REFINE_COST_OVER10_HD
++        Rate: 17
++      - Type: REFINE_COST_EVT_OVER10_HD
++        Rate: 30
+       Bonus: 600
+     - Level: 17
+-      NormalChance: 17
+-      EnrichedChance: 17
+-      EventNormalChance: 20
+-      EventEnrichedChance: 20
++      Chances:
++      - Type: REFINE_COST_OVER10
++        Rate: 17
++      - Type: REFINE_COST_OVER10_HD
++        Rate: 17
++      - Type: REFINE_COST_EVT_OVER10_HD
++        Rate: 20
+       Bonus: 600
+     - Level: 18
+-      NormalChance: 17
+-      EnrichedChance: 17
+-      EventNormalChance: 20
+-      EventEnrichedChance: 20
++      Chances:
++      - Type: REFINE_COST_OVER10
++        Rate: 17
++      - Type: REFINE_COST_OVER10_HD
++        Rate: 17
++      - Type: REFINE_COST_EVT_OVER10_HD
++        Rate: 20
+       Bonus: 600
+     - Level: 19
+-      NormalChance: 15
+-      EnrichedChance: 15
+-      EventNormalChance: 15
+-      EventEnrichedChance: 15
++      Chances:
++      - Type: REFINE_COST_OVER10
++        Rate: 15
++      - Type: REFINE_COST_OVER10_HD
++        Rate: 15
++      - Type: REFINE_COST_EVT_OVER10_HD
++        Rate: 15
+       Bonus: 600
+     - Level: 20
+-      NormalChance: 15
+-      EnrichedChance: 15
+-      EventNormalChance: 15
+-      EventEnrichedChance: 15
++      Chances:
++      - Type: REFINE_COST_OVER10
++        Rate: 15
++      - Type: REFINE_COST_OVER10_HD
++        Rate: 15
++      - Type: REFINE_COST_EVT_OVER10_HD
++        Rate: 15
+       Bonus: 600
+ WeaponLv3:
+   StatsPerLevel: 500
+@@ -359,9 +1087,17 @@
+     - Type: REFINE_COST_OVER10
+       Price: 100000
+       Material: 6224
++      OnFail:
++        Break: 80
++        DownRefine: 20
++        DownRefineNum: 3
+     - Type: REFINE_COST_HD
+       Price: 20000
+       Material: 6240
++      OnFail:
++        Break: 0
++        DownRefine: 100
++        DownRefineNum: 1
+     - Type: REFINE_COST_ENRICHED
+       Price: 2000
+       Material: 7620
+@@ -368,92 +1104,238 @@
+     - Type: REFINE_COST_OVER10_HD
+       Price: 100000
+       Material: 6226
++      OnFail:
++        Break: 0
++        DownRefine: 100
++        DownRefineNum: 1
+     - Type: REFINE_COST_HOLINK
+       Price: 20000
+       Material: 7620
++      RefineUI: false
+     - Type: REFINE_COST_WAGJAK
+       Price: 10000
+       Material: 984
++      RefineUI: false
++    - Type: REFINE_COST_BLESSED
++      Price: 20000
++      Material: 6438
++      RefineUI: false
++      OnFail:
++        Break: 0
++        DownRefine: 0
++    # 'Event' rates
++    - Type: REFINE_COST_EVT_OVER10_HD
++      Price: 100000
++      Material: 6226
++      RefineUI: false
++      OnFail:
++        Break: 0
++        DownRefine: 100
++        DownRefineNum: 1
++    - Type: REFINE_COST_EVT_ENRICHED
++      Price: 2000
++      Material: 7620
++      RefineUI: false
+   Rates:
++    - Level: 1
++      Chances:
++      - Type: REFINE_COST_NORMAL
++        Rate: 100
++      - Type: REFINE_COST_ENRICHED
++        Rate: 100
++      - Type: REFINE_COST_EVT_ENRICHED
++        Rate: 100
++    - Level: 2
++      Chances:
++      - Type: REFINE_COST_NORMAL
++        Rate: 100
++      - Type: REFINE_COST_ENRICHED
++        Rate: 100
++      - Type: REFINE_COST_EVT_ENRICHED
++        Rate: 100
++    - Level: 3
++      Chances:
++      - Type: REFINE_COST_NORMAL
++        Rate: 100
++      - Type: REFINE_COST_ENRICHED
++        Rate: 100
++      - Type: REFINE_COST_EVT_ENRICHED
++        Rate: 100
++    - Level: 4
++      Chances:
++      - Type: REFINE_COST_NORMAL
++        Rate: 100
++      - Type: REFINE_COST_ENRICHED
++        Rate: 100
++      - Type: REFINE_COST_EVT_ENRICHED
++        Rate: 100
++    - Level: 5
++      Chances:
++      - Type: REFINE_COST_NORMAL
++        Rate: 100
++      - Type: REFINE_COST_ENRICHED
++        Rate: 100
++      - Type: REFINE_COST_EVT_ENRICHED
++        Rate: 100
+     - Level: 6
+-      NormalChance: 60
+-      EnrichedChance: 90
+-      EventNormalChance: 60
+-      EventEnrichedChance: 95
++      Chances:
++      - Type: REFINE_COST_NORMAL
++        Rate: 60
++      - Type: REFINE_COST_ENRICHED
++        Rate: 90
++      - Type: REFINE_COST_EVT_ENRICHED
++        Rate: 95
+     - Level: 7
+-      NormalChance: 50
+-      EnrichedChance: 80
+-      EventNormalChance: 50
+-      EventEnrichedChance: 90
++      Chances:
++      - Type: REFINE_COST_NORMAL
++        Rate: 50
++      - Type: REFINE_COST_BLESSED
++        Rate: 50
++      - Type: REFINE_COST_ENRICHED
++        Rate: 80
++      - Type: REFINE_COST_EVT_ENRICHED
++        Rate: 90
+     - Level: 8
+-      NormalChance: 20
+-      EnrichedChance: 40
+-      EventNormalChance: 20
+-      EventEnrichedChance: 70
++      Chances:
++      - Type: REFINE_COST_NORMAL
++        Rate: 20
++      - Type: REFINE_COST_HD
++        Rate: 20
++      - Type: REFINE_COST_ENRICHED
++        Rate: 40
++      - Type: REFINE_COST_BLESSED
++        Rate: 20
++      - Type: REFINE_COST_EVT_ENRICHED
++        Rate: 70
++      BlacksmithBlessing:
++        ItemID: 6635
++        Count: 1
+     - Level: 9
+-      NormalChance: 20
+-      EnrichedChance: 40
+-      EventNormalChance: 20
+-      EventEnrichedChance: 60
++      Chances:
++      - Type: REFINE_COST_NORMAL
++        Rate: 20
++      - Type: REFINE_COST_HD
++        Rate: 20
++      - Type: REFINE_COST_ENRICHED
++        Rate: 40
++      - Type: REFINE_COST_BLESSED
++        Rate: 20
++      - Type: REFINE_COST_EVT_ENRICHED
++        Rate: 60
++      BlacksmithBlessing:
++        ItemID: 6635
++        Count: 2
+     - Level: 10
+-      NormalChance: 19
+-      EnrichedChance: 30
+-      EventNormalChance: 19
+-      EventEnrichedChance: 45
++      Chances:
++      - Type: REFINE_COST_NORMAL
++        Rate: 19
++      - Type: REFINE_COST_HD
++        Rate: 19
++      - Type: REFINE_COST_ENRICHED
++        Rate: 30
++      - Type: REFINE_COST_BLESSED
++        Rate: 19
++      - Type: REFINE_COST_EVT_ENRICHED
++        Rate: 45
++      BlacksmithBlessing:
++        ItemID: 6635
++        Count: 4
+     - Level: 11
+-      NormalChance: 18
+-      EnrichedChance: 18
+-      EventNormalChance: 40
+-      EventEnrichedChance: 40
++      Chances:
++      - Type: REFINE_COST_OVER10
++        Rate: 18
++      - Type: REFINE_COST_OVER10_HD
++        Rate: 18
++      - Type: REFINE_COST_BLESSED
++        Rate: 18
++      - Type: REFINE_COST_EVT_OVER10_HD
++        Rate: 40
++      BlacksmithBlessing:
++        ItemID: 6635
++        Count: 7
+     - Level: 12
+-      NormalChance: 18
+-      EnrichedChance: 18
+-      EventNormalChance: 40
+-      EventEnrichedChance: 40
++      Chances:
++      - Type: REFINE_COST_OVER10
++        Rate: 18
++      - Type: REFINE_COST_OVER10_HD
++        Rate: 18
++      - Type: REFINE_COST_BLESSED
++        Rate: 18
++      - Type: REFINE_COST_EVT_OVER10_HD
++        Rate: 40
++      BlacksmithBlessing:
++        ItemID: 6635
++        Count: 11
+     - Level: 13
+-      NormalChance: 18
+-      EnrichedChance: 18
+-      EventNormalChance: 35
+-      EventEnrichedChance: 35
++      Chances:
++      - Type: REFINE_COST_OVER10
++        Rate: 18
++      - Type: REFINE_COST_OVER10_HD
++        Rate: 18
++      - Type: REFINE_COST_BLESSED
++        Rate: 18
++      - Type: REFINE_COST_EVT_OVER10_HD
++        Rate: 35
+     - Level: 14
+-      NormalChance: 18
+-      EnrichedChance: 18
+-      EventNormalChance: 35
+-      EventEnrichedChance: 35
++      Chances:
++      - Type: REFINE_COST_OVER10
++        Rate: 18
++      - Type: REFINE_COST_OVER10_HD
++        Rate: 18
++      - Type: REFINE_COST_EVT_OVER10_HD
++        Rate: 35
+     - Level: 15
+-      NormalChance: 18
+-      EnrichedChance: 18
+-      EventNormalChance: 30
+-      EventEnrichedChance: 30
++      Chances:
++      - Type: REFINE_COST_OVER10
++        Rate: 18
++      - Type: REFINE_COST_OVER10_HD
++        Rate: 18
++      - Type: REFINE_COST_EVT_OVER10_HD
++        Rate: 30
+     - Level: 16
+-      NormalChance: 17
+-      EnrichedChance: 17
+-      EventNormalChance: 30
+-      EventEnrichedChance: 30
++      Chances:
++      - Type: REFINE_COST_OVER10
++        Rate: 17
++      - Type: REFINE_COST_OVER10_HD
++        Rate: 17
++      - Type: REFINE_COST_EVT_OVER10_HD
++        Rate: 30
+       Bonus: 900
+     - Level: 17
+-      NormalChance: 17
+-      EnrichedChance: 17
+-      EventNormalChance: 20
+-      EventEnrichedChance: 20
++      Chances:
++      - Type: REFINE_COST_OVER10
++        Rate: 17
++      - Type: REFINE_COST_OVER10_HD
++        Rate: 17
++      - Type: REFINE_COST_EVT_OVER10_HD
++        Rate: 20
+       Bonus: 900
+     - Level: 18
+-      NormalChance: 17
+-      EnrichedChance: 17
+-      EventNormalChance: 20
+-      EventEnrichedChance: 20
++      Chances:
++      - Type: REFINE_COST_OVER10
++        Rate: 17
++      - Type: REFINE_COST_OVER10_HD
++        Rate: 17
++      - Type: REFINE_COST_EVT_OVER10_HD
++        Rate: 20
+       Bonus: 900
+     - Level: 19
+-      NormalChance: 15
+-      EnrichedChance: 15
+-      EventNormalChance: 15
+-      EventEnrichedChance: 15
++      Chances:
++      - Type: REFINE_COST_OVER10
++        Rate: 15
++      - Type: REFINE_COST_OVER10_HD
++        Rate: 15
++      - Type: REFINE_COST_EVT_OVER10_HD
++        Rate: 15
+       Bonus: 900
+     - Level: 20
+-      NormalChance: 15
+-      EnrichedChance: 15
+-      EventNormalChance: 15
+-      EventEnrichedChance: 15
++      Chances:
++      - Type: REFINE_COST_OVER10
++        Rate: 15
++      - Type: REFINE_COST_OVER10_HD
++        Rate: 15
++      - Type: REFINE_COST_EVT_OVER10_HD
++        Rate: 15
+       Bonus: 900
+ WeaponLv4:
+   StatsPerLevel: 700
+@@ -466,9 +1348,17 @@
+     - Type: REFINE_COST_OVER10
+       Price: 100000
+       Material: 6224
++      OnFail:
++        Break: 80
++        DownRefine: 20
++        DownRefineNum: 3
+     - Type: REFINE_COST_HD
+       Price: 20000
+       Material: 6240
++      OnFail:
++        Break: 0
++        DownRefine: 100
++        DownRefineNum: 1
+     - Type: REFINE_COST_ENRICHED
+       Price: 2000
+       Material: 7620
+@@ -475,97 +1365,238 @@
+     - Type: REFINE_COST_OVER10_HD
+       Price: 100000
+       Material: 6226
++      OnFail:
++        Break: 0
++        DownRefine: 100
++        DownRefineNum: 1
+     - Type: REFINE_COST_HOLINK
+       Price: 50000
+       Material: 7620
++      RefineUI: false
+     - Type: REFINE_COST_WAGJAK
+       Price: 20000
+       Material: 984
++      RefineUI: false
++    - Type: REFINE_COST_BLESSED
++      Price: 40000
++      Material: 6438
++      RefineUI: false
++      OnFail:
++        Break: 0
++        DownRefine: 0
++    # 'Event' rates
++    - Type: REFINE_COST_EVT_OVER10_HD
++      Price: 100000
++      Material: 6226
++      RefineUI: false
++      OnFail:
++        Break: 0
++        DownRefine: 100
++        DownRefineNum: 1
++    - Type: REFINE_COST_EVT_ENRICHED
++      Price: 2000
++      Material: 7620
++      RefineUI: false
+   Rates:
++    - Level: 1
++      Chances:
++      - Type: REFINE_COST_NORMAL
++        Rate: 100
++      - Type: REFINE_COST_ENRICHED
++        Rate: 100
++      - Type: REFINE_COST_EVT_ENRICHED
++        Rate: 100
++    - Level: 2
++      Chances:
++      - Type: REFINE_COST_NORMAL
++        Rate: 100
++      - Type: REFINE_COST_ENRICHED
++        Rate: 100
++      - Type: REFINE_COST_EVT_ENRICHED
++        Rate: 100
++    - Level: 3
++      Chances:
++      - Type: REFINE_COST_NORMAL
++        Rate: 100
++      - Type: REFINE_COST_ENRICHED
++        Rate: 100
++      - Type: REFINE_COST_EVT_ENRICHED
++        Rate: 100
++    - Level: 4
++      Chances:
++      - Type: REFINE_COST_NORMAL
++        Rate: 100
++      - Type: REFINE_COST_ENRICHED
++        Rate: 100
++      - Type: REFINE_COST_EVT_ENRICHED
++        Rate: 100
+     - Level: 5
+-      NormalChance: 60
+-      EnrichedChance: 90
+-      EventNormalChance: 60
+-      EventEnrichedChance: 95
++      Chances:
++      - Type: REFINE_COST_NORMAL
++        Rate: 60
++      - Type: REFINE_COST_ENRICHED
++        Rate: 90
++      - Type: REFINE_COST_EVT_ENRICHED
++        Rate: 95
+     - Level: 6
+-      NormalChance: 40
+-      EnrichedChance: 70
+-      EventNormalChance: 40
+-      EventEnrichedChance: 80
++      Chances:
++      - Type: REFINE_COST_NORMAL
++        Rate: 40
++      - Type: REFINE_COST_ENRICHED
++        Rate: 70
++      - Type: REFINE_COST_EVT_ENRICHED
++        Rate: 80
+     - Level: 7
+-      NormalChance: 40
+-      EnrichedChance: 70
+-      EventNormalChance: 40
+-      EventEnrichedChance: 80
++      Chances:
++      - Type: REFINE_COST_NORMAL
++        Rate: 40
++      - Type: REFINE_COST_ENRICHED
++        Rate: 70
++      - Type: REFINE_COST_BLESSED
++        Rate: 40
++      - Type: REFINE_COST_EVT_ENRICHED
++        Rate: 80
+     - Level: 8
+-      NormalChance: 20
+-      EnrichedChance: 40
+-      EventNormalChance: 20
+-      EventEnrichedChance: 60
++      Chances:
++      - Type: REFINE_COST_NORMAL
++        Rate: 20
++      - Type: REFINE_COST_HD
++        Rate: 20
++      - Type: REFINE_COST_ENRICHED
++        Rate: 40
++      - Type: REFINE_COST_BLESSED
++        Rate: 20
++      - Type: REFINE_COST_EVT_ENRICHED
++        Rate: 60
++      BlacksmithBlessing:
++        ItemID: 6635
++        Count: 1
+     - Level: 9
+-      NormalChance: 20
+-      EnrichedChance: 40
+-      EventNormalChance: 20
+-      EventEnrichedChance: 50
++      Chances:
++      - Type: REFINE_COST_NORMAL
++        Rate: 20
++      - Type: REFINE_COST_HD
++        Rate: 20
++      - Type: REFINE_COST_ENRICHED
++        Rate: 40
++      - Type: REFINE_COST_BLESSED
++        Rate: 20
++      - Type: REFINE_COST_EVT_ENRICHED
++        Rate: 50
++      BlacksmithBlessing:
++        ItemID: 6635
++        Count: 2
+     - Level: 10
+-      NormalChance: 9
+-      EnrichedChance: 20
+-      EventNormalChance: 9
+-      EventEnrichedChance: 35
++      Chances:
++      - Type: REFINE_COST_NORMAL
++        Rate: 9
++      - Type: REFINE_COST_HD
++        Rate: 9
++      - Type: REFINE_COST_ENRICHED
++        Rate: 20
++      - Type: REFINE_COST_BLESSED
++        Rate: 9
++      - Type: REFINE_COST_EVT_ENRICHED
++        Rate: 35
++      BlacksmithBlessing:
++        ItemID: 6635
++        Count: 4
+     - Level: 11
+-      NormalChance: 8
+-      EnrichedChance: 8
+-      EventNormalChance: 20
+-      EventEnrichedChance: 20
++      Chances:
++      - Type: REFINE_COST_OVER10
++        Rate: 8
++      - Type: REFINE_COST_OVER10_HD
++        Rate: 8
++      - Type: REFINE_COST_BLESSED
++        Rate: 8
++      - Type: REFINE_COST_EVT_OVER10_HD
++        Rate: 20
++      BlacksmithBlessing:
++        ItemID: 6635
++        Count: 7
+     - Level: 12
+-      NormalChance: 8
+-      EnrichedChance: 8
+-      EventNormalChance: 20
+-      EventEnrichedChance: 20
++      Chances:
++      - Type: REFINE_COST_OVER10
++        Rate: 8
++      - Type: REFINE_COST_OVER10_HD
++        Rate: 8
++      - Type: REFINE_COST_BLESSED
++        Rate: 8
++      - Type: REFINE_COST_EVT_OVER10_HD
++        Rate: 20
++      BlacksmithBlessing:
++        ItemID: 6635
++        Count: 11
+     - Level: 13
+-      NormalChance: 8
+-      EnrichedChance: 8
+-      EventNormalChance: 16
+-      EventEnrichedChance: 16
++      Chances:
++      - Type: REFINE_COST_OVER10
++        Rate: 8
++      - Type: REFINE_COST_OVER10_HD
++        Rate: 8
++      - Type: REFINE_COST_BLESSED
++        Rate: 8
++      - Type: REFINE_COST_EVT_OVER10_HD
++        Rate: 16
+     - Level: 14
+-      NormalChance: 8
+-      EnrichedChance: 8
+-      EventNormalChance: 16
+-      EventEnrichedChance: 16
++      Chances:
++      - Type: REFINE_COST_OVER10
++        Rate: 8
++      - Type: REFINE_COST_OVER10_HD
++        Rate: 8
++      - Type: REFINE_COST_EVT_OVER10_HD
++        Rate: 16
+     - Level: 15
+-      NormalChance: 7
+-      EnrichedChance: 7
+-      EventNormalChance: 15
+-      EventEnrichedChance: 15
++      Chances:
++      - Type: REFINE_COST_OVER10
++        Rate: 7
++      - Type: REFINE_COST_OVER10_HD
++        Rate: 7
++      - Type: REFINE_COST_EVT_OVER10_HD
++        Rate: 15
+     - Level: 16
+-      NormalChance: 7
+-      EnrichedChance: 7
+-      EventNormalChance: 15
+-      EventEnrichedChance: 15
++      Chances:
++      - Type: REFINE_COST_OVER10
++        Rate: 7
++      - Type: REFINE_COST_OVER10_HD
++        Rate: 7
++      - Type: REFINE_COST_EVT_OVER10_HD
++        Rate: 15
+       Bonus: 1200
+     - Level: 17
+-      NormalChance: 7
+-      EnrichedChance: 7
+-      EventNormalChance: 14
+-      EventEnrichedChance: 14
++      Chances:
++      - Type: REFINE_COST_OVER10
++        Rate: 7
++      - Type: REFINE_COST_OVER10_HD
++        Rate: 7
++      - Type: REFINE_COST_EVT_OVER10_HD
++        Rate: 14
+       Bonus: 1200
+     - Level: 18
+-      NormalChance: 7
+-      EnrichedChance: 7
+-      EventNormalChance: 14
+-      EventEnrichedChance: 14
++      Chances:
++      - Type: REFINE_COST_OVER10
++        Rate: 7
++      - Type: REFINE_COST_OVER10_HD
++        Rate: 7
++      - Type: REFINE_COST_EVT_OVER10_HD
++        Rate: 14
+       Bonus: 1200
+     - Level: 19
+-      NormalChance: 5
+-      EnrichedChance: 5
+-      EventNormalChance: 10
+-      EventEnrichedChance: 10
++      Chances:
++      - Type: REFINE_COST_OVER10
++        Rate: 5
++      - Type: REFINE_COST_OVER10_HD
++        Rate: 5
++      - Type: REFINE_COST_EVT_OVER10_HD
++        Rate: 10
+       Bonus: 1200
+     - Level: 20
+-      NormalChance: 5
+-      EnrichedChance: 5
+-      EventNormalChance: 10
+-      EventEnrichedChance: 10
++      Chances:
++      - Type: REFINE_COST_OVER10
++        Rate: 5
++      - Type: REFINE_COST_OVER10_HD
++        Rate: 5
++      - Type: REFINE_COST_EVT_OVER10_HD
++        Rate: 10
+       Bonus: 1200
+ Shadow:
+   StatsPerLevel: 0
+@@ -575,40 +1606,246 @@
+     - Type: REFINE_COST_NORMAL
+       Price: 20000
+       Material: 985
++      RefineUI: true
+     - Type: REFINE_COST_HD
+       Price: 20000
+       Material: 6241
++      RefineUI: true
++      OnFail:
++        Break: 0
++        DownRefine: 100
++        DownRefineNum: 1
+     - Type: REFINE_COST_ENRICHED
+       Price: 20000
+       Material: 7619
++      RefineUI: true
++    # 'Event' rates
++    - Type: REFINE_COST_EVT_ENRICHED
++      Price: 20000
++      Material: 7619
++      RefineUI: false
+   Rates:
++    - Level: 1
++      Chances:
++      - Type: REFINE_COST_NORMAL
++        Rate: 100
++      - Type: REFINE_COST_ENRICHED
++        Rate: 100
++      - Type: REFINE_COST_EVT_ENRICHED
++        Rate: 100
++    - Level: 2
++      Chances:
++      - Type: REFINE_COST_NORMAL
++        Rate: 100
++      - Type: REFINE_COST_ENRICHED
++        Rate: 100
++      - Type: REFINE_COST_EVT_ENRICHED
++        Rate: 100
++    - Level: 3
++      Chances:
++      - Type: REFINE_COST_NORMAL
++        Rate: 100
++      - Type: REFINE_COST_ENRICHED
++        Rate: 100
++      - Type: REFINE_COST_EVT_ENRICHED
++        Rate: 100
++    - Level: 4
++      Chances:
++      - Type: REFINE_COST_NORMAL
++        Rate: 100
++      - Type: REFINE_COST_ENRICHED
++        Rate: 100
++      - Type: REFINE_COST_EVT_ENRICHED
++        Rate: 100
+     - Level: 5
+-      NormalChance: 60
+-      EnrichedChance: 90
+-      EventNormalChance: 60
+-      EventEnrichedChance: 95
++      Chances:
++      - Type: REFINE_COST_NORMAL
++        Rate: 60
++      - Type: REFINE_COST_ENRICHED
++        Rate: 90
++      - Type: REFINE_COST_EVT_ENRICHED
++        Rate: 95
+     - Level: 6
+-      NormalChance: 40
+-      EnrichedChance: 70
+-      EventNormalChance: 40
+-      EventEnrichedChance: 80
++      Chances:
++      - Type: REFINE_COST_NORMAL
++        Rate: 40
++      - Type: REFINE_COST_ENRICHED
++        Rate: 70
++      - Type: REFINE_COST_EVT_ENRICHED
++        Rate: 80
+     - Level: 7
+-      NormalChance: 40
+-      EnrichedChance: 70
+-      EventNormalChance: 40
+-      EventEnrichedChance: 80
++      Chances:
++      - Type: REFINE_COST_NORMAL
++        Rate: 40
++      - Type: REFINE_COST_ENRICHED
++        Rate: 70
++      - Type: REFINE_COST_EVT_ENRICHED
++        Rate: 80
+     - Level: 8
+-      NormalChance: 20
+-      EnrichedChance: 40
+-      EventNormalChance: 20
+-      EventEnrichedChance: 50
++      Chances:
++      - Type: REFINE_COST_NORMAL
++        Rate: 20
++      - Type: REFINE_COST_HD
++        Rate: 20
++      - Type: REFINE_COST_ENRICHED
++        Rate: 40
++      - Type: REFINE_COST_EVT_ENRICHED
++        Rate: 50
++    #  BlacksmithBlessing:
++    #    ItemID: 6635
++    #    Count: 1
+     - Level: 9
+-      NormalChance: 20
+-      EnrichedChance: 40
+-      EventNormalChance: 20
+-      EventEnrichedChance: 50
++      Chances:
++      - Type: REFINE_COST_NORMAL
++        Rate: 20
++      - Type: REFINE_COST_HD
++        Rate: 20
++      - Type: REFINE_COST_ENRICHED
++        Rate: 40
++      - Type: REFINE_COST_EVT_ENRICHED
++        Rate: 50
++    #  BlacksmithBlessing:
++    #    ItemID: 6635
++    #    Count: 2
+     - Level: 10
+-      NormalChance: 9
+-      EnrichedChance: 20
+-      EventNormalChance: 9
+-      EventEnrichedChance: 35
++      Chances:
++      - Type: REFINE_COST_NORMAL
++        Rate: 9
++      - Type: REFINE_COST_HD
++        Rate: 9
++      - Type: REFINE_COST_ENRICHED
++        Rate: 20
++      - Type: REFINE_COST_EVT_ENRICHED
++        Rate: 35
++    #  BlacksmithBlessing:
++    #    ItemID: 6635
++    #    Count: 4
++    #- Level: 11
++    #  Chances:
++    #  BlacksmithBlessing:
++    #     ItemID: 6635
++    #     Count: 7
++ShadowWeapon:
++  StatsPerLevel: 0
++  RandomBonusStartLevel: 0
++  RandomBonusValue: 0
++  Costs:
++    - Type: REFINE_COST_NORMAL
++      Price: 20000
++      Material: 984
++    - Type: REFINE_COST_HD
++      Price: 20000
++      Material: 6240
++      OnFail:
++        Break: 0
++        DownRefine: 100
++        DownRefineNum: 1
++    - Type: REFINE_COST_ENRICHED
++      Price: 2000
++      Material: 7620
++    # 'Event' rates
++    - Type: REFINE_COST_EVT_ENRICHED
++      Price: 2000
++      Material: 7620
++      RefineUI: false
++  Rates:
++    - Level: 1
++      Chances:
++      - Type: REFINE_COST_NORMAL
++        Rate: 100
++      - Type: REFINE_COST_ENRICHED
++        Rate: 100
++      - Type: REFINE_COST_EVT_ENRICHED
++        Rate: 100
++    - Level: 2
++      Chances:
++      - Type: REFINE_COST_NORMAL
++        Rate: 100
++      - Type: REFINE_COST_ENRICHED
++        Rate: 100
++      - Type: REFINE_COST_EVT_ENRICHED
++        Rate: 100
++    - Level: 3
++      Chances:
++      - Type: REFINE_COST_NORMAL
++        Rate: 100
++      - Type: REFINE_COST_ENRICHED
++        Rate: 100
++      - Type: REFINE_COST_EVT_ENRICHED
++        Rate: 100
++    - Level: 4
++      Chances:
++      - Type: REFINE_COST_NORMAL
++        Rate: 100
++      - Type: REFINE_COST_ENRICHED
++        Rate: 100
++      - Type: REFINE_COST_EVT_ENRICHED
++        Rate: 100
++    - Level: 5
++      Chances:
++      - Type: REFINE_COST_NORMAL
++        Rate: 60
++      - Type: REFINE_COST_ENRICHED
++        Rate: 90
++      - Type: REFINE_COST_EVT_ENRICHED
++        Rate: 95
++    - Level: 6
++      Chances:
++      - Type: REFINE_COST_NORMAL
++        Rate: 40
++      - Type: REFINE_COST_ENRICHED
++        Rate: 70
++      - Type: REFINE_COST_EVT_ENRICHED
++        Rate: 80
++    - Level: 7
++      Chances:
++      - Type: REFINE_COST_NORMAL
++        Rate: 40
++      - Type: REFINE_COST_ENRICHED
++        Rate: 70
++      - Type: REFINE_COST_EVT_ENRICHED
++        Rate: 80
++    - Level: 8
++      Chances:
++      - Type: REFINE_COST_NORMAL
++        Rate: 20
++      - Type: REFINE_COST_HD
++        Rate: 20
++      - Type: REFINE_COST_ENRICHED
++        Rate: 40
++      - Type: REFINE_COST_EVT_ENRICHED
++        Rate: 60
++    #  BlacksmithBlessing:
++    #    ItemID: 6635
++    #    Count: 1
++    - Level: 9
++      Chances:
++      - Type: REFINE_COST_NORMAL
++        Rate: 20
++      - Type: REFINE_COST_HD
++        Rate: 20
++      - Type: REFINE_COST_ENRICHED
++        Rate: 40
++      - Type: REFINE_COST_EVT_ENRICHED
++        Rate: 50
++    #  BlacksmithBlessing:
++    #    ItemID: 6635
++    #    Count: 2
++    - Level: 10
++      Chances:
++      - Type: REFINE_COST_NORMAL
++        Rate: 9
++      - Type: REFINE_COST_HD
++        Rate: 9
++      - Type: REFINE_COST_ENRICHED
++        Rate: 20
++      - Type: REFINE_COST_EVT_ENRICHED
++        Rate: 35
++    #  BlacksmithBlessing:
++    #    ItemID: 6635
++    #    Count: 4
++    #- Level: 11
++    #  Chances:
++    #  BlacksmithBlessing:
++    #     ItemID: 6635
++    #     Count: 7
+Index: doc/atcommands.txt
+===================================================================
+--- doc/atcommands.txt	(revisão 65528)
++++ doc/atcommands.txt	(cópia de trabalho)
+@@ -1186,6 +1186,14 @@
+ 
+ ---------------------------------------
+ 
++@refineui
++
++Opens the refine user interface.
++
++Note: This command requires packet version 2016-10-12 or newer.
++
++---------------------------------------
++
+ @request <message>
+ 
+ Sends a message to all connected GMs (via the GM whisper system).
+Index: doc/script_commands.txt
+===================================================================
+--- doc/script_commands.txt	(revisão 65528)
++++ doc/script_commands.txt	(cópia de trabalho)
+@@ -2804,7 +2804,7 @@
+ 
+ ---------------------------------------
+ 
+-*getequippercentrefinery(<equipment slot>{,<enriched>,<char_id>})
++*getequippercentrefinery(<equipment slot>,<type>{,<char_id>})
+ 
+ This function calculates and returns the percent value chance to successfully
+ refine the item found in the specified equipment slot of the invoking character
+@@ -2812,8 +2812,9 @@
+ a certain refine level is found in the db/(pre-)re/refine_db.yml file. For a list of
+ equipment slots see 'getequipid'.
+ 
+-If enriched parameter is set to true, chance to successfully refine the item with
+-enriched material is returned instead.
++For 'type'  values, see the valid types in 'getequiprefinecost' below.
++(As backward compatibility, if this value is unset, below +10 will use 
++REFINE_COST_NORMAL and above +10 is using REFINE_COST_OVER10).
+ 
+ These values can be displayed for the player to see, or used to calculate the
+ random change of a refine succeeding or failing and then going through with it
+@@ -2832,13 +2833,16 @@
+ 
+ Valid cost types are:
+ 
+-REFINE_COST_NORMAL     - For normal refining
+-REFINE_COST_OVER10     - For refining over +10
+-REFINE_COST_HD         - For refining with HD ores
+-REFINE_COST_ENRICHED   - For refining with enriched ores
+-REFINE_COST_OVER10_HD  - For refining over +10 with HD ores
+-REFINE_COST_HOLINK     - For refining at Holink in Malangdo
+-REFINE_COST_WAGJAK     - For refining at Refining Machine Wagjak in the Novice Academy
++REFINE_COST_NORMAL         - For normal refining
++REFINE_COST_OVER10         - For refining over +10
++REFINE_COST_HD             - For refining with HD ores
++REFINE_COST_ENRICHED       - For refining with enriched ores
++REFINE_COST_OVER10_HD      - For refining over +10 with HD ores
++REFINE_COST_HOLINK         - For refining at Holink in Malangdo
++REFINE_COST_WAGJAK         - For refining at Refining Machine Wagjak in the Novice Academy
++REFINE_COST_BLESSED        - For refining using Blessed Ore
++REFINE_COST_EVT_ENRICHED   - For refining with enriched ores with event rates
++REFINE_COST_EVT_OVER10_HD  - For refining over +10 with HD ores with event rates
+ 
+ This function will return required cost for refining based on <information> argument.
+ 
+@@ -2848,10 +2852,40 @@
+ REFINE_MATERIAL_ID     - Material Item ID
+ 
+ This function will return -1 on failure. The function fails if the cost type
+-is invalid or if there is no item in the equipment slot. 
++is invalid or if there is no item in the equipment slot.
+ 
+ ---------------------------------------
+ 
++*getblacksmithblessing(<type>,<refine>{,<var>})
++
++Get info about 'Blacksmith Blessing' item used for specified <type> and
++<refine>. The info will be stored in .@refinebb array.
++
++    .@refinebb[0] = Item ID acknowledged as Blacksmith Blessing
++    .@refinebb[1] = Amount needed
++
++<type> is can be 0 for armor type, 1-4 for weapons level 1 to 4 or
++	REFINE_TYPE_ARMOR    = Armor
++	REFINE_TYPE_WEAPON1  = Weapon Lv 1
++	REFINE_TYPE_WEAPON2  = Weapon Lv 2
++	REFINE_TYPE_WEAPON3  = Weapon Lv 3
++	REFINE_TYPE_WEAPON4  = Weapon Lv 4
++	REFINE_TYPE_SHADOW   = Shadowgear
++	REFINE_TYPE_COSTUME  = Costume
++
++If <var> is specified, it will replaces .@refinebb as default array. This
++script also returns 1 on success and 0 on failure or no info.
++
++---------------------------------------
++
++*refineui({<char id>})
++
++Opens the refine UI for the attached player or the given character id.
++
++This feature requires 2016-10-12aRagexeRE or newer.
++
++---------------------------------------
++
+ *getareadropitem("<map name>",<x1>,<y1>,<x2>,<y2>,<item>)
+ 
+ This function will count all the items with the specified ID number lying on the
+Index: npc/merchants/advanced_refiner.txt
+===================================================================
+--- npc/merchants/advanced_refiner.txt	(revisão 65528)
++++ npc/merchants/advanced_refiner.txt	(cópia de trabalho)
+@@ -66,7 +66,7 @@
+ 
+ 	mes "[Suhnbi]";
+ 	mes "Clang! Clang! Clang!";
+-	if (getequippercentrefinery(.@part, true) > rand(100)) {
++	if (getequippercentrefinery(.@part, REFINE_COST_ENRICHED) > rand(100)) {
+ 		successrefitem .@part;
+ 		next;
+ 		emotion ET_BEST;
+@@ -113,7 +113,7 @@
+ 	mes "Would you like to continue?";
+ 	next;
+ 	if(select("Yes:No") == 1) {
+-		if (getequippercentrefinery(.@part) < 100) {
++		if (getequippercentrefinery(.@part,REFINE_COST_ENRICHED) < 100) {
+ 			if (.@weapon_lvl) {
+ 				mes "[Suhnbi]";
+ 				mes "Wow!!";
+Index: npc/merchants/refine.txt
+===================================================================
+--- npc/merchants/refine.txt	(revisão 65528)
++++ npc/merchants/refine.txt	(cópia de trabalho)
+@@ -560,9 +560,20 @@
+ //= .@safe to the max safe refine in refine_db.txt as well.
+ //============================================================
+ function	script	refinemain	{
+-	disable_items;
+ 	.@npc_name$ = getarg(0);
+ 	.@features = getarg(1);
++
++	if( getbattleflag( "feature.refineui" ) == 3 ){
++		mes "["+ .@npc_name$ +"]";
++		mes "I've spent a long time refining powerful weapons.";
++		mes "You are in the presence of 장춰탕넨 [Zhang Zhuangtan]"; // TODO: find a valid translation
++		mes "Do you want to strengthen your equipment?";
++		close2;
++		refineui();
++		end;
++	}
++
++	disable_items;
+ 	mes "["+ .@npc_name$ +"]";
+ 	mes "I'm the Armsmith.";
+ 	mes "I can refine all kinds of weapons, armor and equipment, so let me";
+@@ -647,7 +658,7 @@
+ 			mes "rush. Take your time.";
+ 			close;
+ 		}
+-		if(getequippercentrefinery(.@part) < 100) {
++		if(getequippercentrefinery(.@part, REFINE_COST_NORMAL) < 100) {
+ 			mes "["+ .@npc_name$ +"]";
+ 			mes "Oh no! If I continue to";
+ 			mes "refine this, there's a risk it could";
+@@ -698,7 +709,7 @@
+ 			close;
+ 		}
+ 
+-		if(getequippercentrefinery(.@part) <= rand(100)) {
++		if(getequippercentrefinery(.@part, REFINE_COST_NORMAL) <= rand(100)) {
+ 			failedrefitem .@part;
+ 			mes "["+ .@npc_name$ +"]";
+ 			emotion (!rand(5))?ET_MONEY:ET_HUK;
+@@ -811,7 +822,7 @@
+ 		}
+ 		// anti-hack
+ 		if (callfunc("F_IsEquipIDHack", .@part, .@refineitemid) || callfunc("F_IsEquipCardHack", .@part, .@card[0], .@card[1], .@card[2], .@card[3]) ||
+-				callfunc("F_IsEquipRefineHack", .@part, .@refinerycnt) || (.@menu2 == 1 && getequippercentrefinery(.@part) < 100)) {
++				callfunc("F_IsEquipRefineHack", .@part, .@refinerycnt) || (.@menu2 == 1 && getequippercentrefinery(.@part, REFINE_COST_NORMAL) < 100)) {
+ 			mes "["+ .@npc_name$ +"]";
+ 			mes "Clang... No, but did you imagine I could be so stupid?!";
+ 			mes "You changed it...";
+@@ -819,7 +830,7 @@
+ 			close;
+ 		} 
+ 		mes "Clang, clang!!!";
+-		if(.@menu2 == 2 && getequippercentrefinery(.@part) <= rand(100)) {
++		if(.@menu2 == 2 && getequippercentrefinery(.@part, REFINE_COST_NORMAL) <= rand(100)) {
+ 			failedrefitem .@part;
+ 			emotion ET_HUK;
+ 			mes "["+ .@npc_name$ +"]";
+Index: npc/quests/seals/mjolnir_seal.txt
+===================================================================
+--- npc/quests/seals/mjolnir_seal.txt	(revisão 65528)
++++ npc/quests/seals/mjolnir_seal.txt	(cópia de trabalho)
+@@ -1972,7 +1972,7 @@
+ 					mes "Oh, this is excellent! This piece here has been perfectly refined! But this isn't what I want. I can't do any work on this at all.";
+ 					close;
+ 				}
+-				if (GetEquipPercentRefinery(.@part) == 100) {
++				if (getequippercentrefinery(.@part, REFINE_COST_NORMAL) == 0) {
+ 					mes "[Vestri]";
+ 					mes "This item isn't even a challenge to upgrade. You can get humans to do this kind of beginner's stuff. Get them to refine it first.";
+ 					next;
+@@ -2044,7 +2044,7 @@
+ 				if (callfunc("F_IsEquipIDHack", .@part, .@equip_id) || callfunc("F_IsEquipCardHack", .@part, .@card[0], .@card[1], .@card[2], .@card[3]) || callfunc("F_IsEquipRefineHack", .@part, .@equip_refine))
+ 					close;
+ 
+-				if (getequippercentrefinery(.@part) > rand(100)) {
++				if (getequippercentrefinery(.@part,REFINE_COST_NORMAL) > rand(100)) {
+ 					mes "^3355FF*Clang Clang!*^000000";
+ 					successrefitem .@part;
+ 					next;
+@@ -2196,7 +2196,7 @@
+ 					mes "Oh, this is excellent! This piece here has been perfectly refined! But this isn't what I want. I can't do any work on this at all.";
+ 					close;
+ 				}
+-				if (GetEquipPercentRefinery(.@part) == 100) {
++				if (getequippercentrefinery(.@part, REFINE_COST_NORMAL) == 0) {
+ 					mes "[Vestri]";
+ 					mes "This item isn't even a challenge to upgrade. You can get humans to do this kind of beginner's stuff. Get them to refine it first.";
+ 					next;
+@@ -2262,7 +2262,7 @@
+ 				if (callfunc("F_IsEquipIDHack", .@part, .@equip_id) || callfunc("F_IsEquipCardHack", .@part, .@card[0], .@card[1], .@card[2], .@card[3]) || callfunc("F_IsEquipRefineHack", .@part, .@equip_refine))
+ 					close;
+ 
+-				if (getequippercentrefinery(.@part) > rand(100)) {
++				if (getequippercentrefinery(.@part,REFINE_COST_NORMAL) > rand(100)) {
+ 					mes "^3355FF*Clang Clang!*^000000";
+ 					successrefitem .@part;
+ 					next;
+Index: npc/re/jobs/2e/kagerou_oboro.txt
+===================================================================
+--- npc/re/jobs/2e/kagerou_oboro.txt	(revisão 65528)
++++ npc/re/jobs/2e/kagerou_oboro.txt	(cópia de trabalho)
+@@ -2462,7 +2462,7 @@
+ 		mes "This equipment is perfectly refined. Keep it for yourself!";  //custom translation
+ 		close;
+ 	}
+-	if (getequippercentrefinery(.@part) < 100) {
++	if (getequippercentrefinery(.@part, REFINE_COST_NORMAL) < 100) {
+ 		mes "This is very well refined equipment. Do you want to continue? Refine skill decreases by 1 if refinement fails.";
+ 		next;
+ 		if(select("Continue.:Stop.") == 2) {
+Index: npc/re/jobs/novice/academy.txt
+===================================================================
+--- npc/re/jobs/novice/academy.txt	(revisão 65528)
++++ npc/re/jobs/novice/academy.txt	(cópia de trabalho)
+@@ -12836,7 +12836,7 @@
+ 				mes "Cancel the refining.";
+ 				close;
+ 			}
+-			if (getequippercentrefinery(.@part) < 100) {
++			if (getequippercentrefinery(.@part, REFINE_COST_NORMAL) < 100) {
+ 				mes "[Refining Machine Wagjak]";
+ 				mes "-Ddarritt!-";
+ 				mes "The user's confirmation required.";
+@@ -12851,7 +12851,7 @@
+ 			// anti-hack
+ 			if (callfunc("F_IsEquipIDHack", .@part, .@refineitemid) || callfunc("F_IsEquipCardHack", .@part, .@card[0], .@card[1], .@card[2], .@card[3]) || callfunc("F_IsEquipRefineHack", .@part, .@refinerycnt))
+ 				close;
+-			if (getequippercentrefinery(.@part) <= rand(100)) {
++			if (getequippercentrefinery(.@part, REFINE_COST_NORMAL) <= rand(100)) {
+ 				failedrefitem .@part;
+ 				mes "[Refining Machine Wagjak]";
+ 				mes "Result : Fail";
+@@ -12889,7 +12889,7 @@
+ 		mes "Refining has been cancelled as per the user's request.";
+ 		close;
+ 	}
+-	if (getequippercentrefinery(.@part) < 100) {
++	if (getequippercentrefinery(.@part, REFINE_COST_NORMAL) < 100) {
+ 		mes "[Refining Machine Wagjak]";
+ 		mes "-Ddarritt!-";
+ 		mes "The user's confirmation required.";
+@@ -12920,7 +12920,7 @@
+ 		mes "You are short of refining price.";
+ 		close;
+ 	}
+-	if (getequippercentrefinery(.@part) <= rand(100)) {
++	if (getequippercentrefinery(.@part, REFINE_COST_NORMAL) <= rand(100)) {
+ 		failedrefitem .@part;
+ 		mes "[Refining Machine Wagjak]";
+ 		mes "Result : Fail";
+Index: npc/re/merchants/advanced_refiner.txt
+===================================================================
+--- npc/re/merchants/advanced_refiner.txt	(revisão 65528)
++++ npc/re/merchants/advanced_refiner.txt	(cópia de trabalho)
+@@ -110,7 +110,7 @@
+ 		mes "You don't believe in refine master Holink, meow?~";
+ 		close;
+ 	}
+-	if (getequippercentrefinery(.@part, true) < 100) {
++	if (getequippercentrefinery(.@part, REFINE_COST_ENRICHED) < 100) {
+ 		mes "[Holink]";
+ 		mes "Meow!!";
+ 		if (.@type$ == "armor")
+@@ -159,7 +159,7 @@
+ 		close;
+ 	}
+ 
+-	if (getequippercentrefinery(.@part, true) > rand(100)) {
++	if (getequippercentrefinery(.@part, REFINE_COST_ENRICHED) > rand(100)) {
+ 		successrefitem .@part;
+ 		mes "[Holink]";
+ 		mes "Me~ Me~ Meow! Fun fun refining~";
+Index: npc/re/merchants/blessed_refiner.txt
+===================================================================
+--- npc/re/merchants/blessed_refiner.txt	(revisão 65528)
++++ npc/re/merchants/blessed_refiner.txt	(cópia de trabalho)
+@@ -78,31 +78,23 @@
+ 		close;
+ 	}
+ 	set .@equip_lv, getequipweaponlv(.@part);
++	.@material = getequiprefinecost(.@part, REFINE_COST_BLESSED, REFINE_MATERIAL_ID);
++	.@price = getequiprefinecost(.@part, REFINE_COST_BLESSED, REFINE_ZENY_COST);
+ 	switch(.@equip_lv) {
+ 	default:
+ 	case 0:
+-		set .@price,20000;
+-		set .@material,6439; //Unbreakable_Def
+ 		set .@type$,"Armor";
+ 		break;
+ 	case 1:
+-		set .@price,1000;
+-		set .@material,6438; //Unbreakable_Weap
+ 		set .@type$,"Weapon";
+ 		break;
+ 	case 2:
+-		set .@price,2000;
+-		set .@material,6438; //Unbreakable_Weap
+ 		set .@type$,"Weapon";
+ 		break;
+ 	case 3:
+-		set .@price,20000;
+-		set .@material,6438; //Unbreakable_Weap
+ 		set .@type$,"Weapon";
+ 		break;
+ 	case 4:
+-		set .@price,40000;
+-		set .@material,6438; //Unbreakable_Weap
+ 		set .@type$,"Weapon";
+ 		break;
+ 	}
+@@ -116,7 +108,7 @@
+ 		mes "I am busy, don't joke with me!";
+ 		close;
+ 	}
+-	if (getequippercentrefinery(.@part) < 100) {
++	if (getequippercentrefinery(.@part, REFINE_COST_BLESSED) < 100) {
+ 		mes "[Blacksmith Dister]";
+ 		mes "This "+.@type$+" has been refined many times. Although it will not disappear upon failure, the "+.@ore$+" will disappear!";
+ 		next;
+@@ -144,7 +136,7 @@
+ 
+ 	mes "[Blacksmith Dister]";
+ 	mes "Tac! Tac! Tac!";
+-	if (getequippercentrefinery(.@part, true) > rand(100)) {
++	if (getequippercentrefinery(.@part, REFINE_COST_BLESSED) > rand(100)) {
+ 		specialeffect EF_BLESSING;
+ 		successrefitem .@part;
+ 		next;
+Index: npc/re/merchants/hd_refiner.txt
+===================================================================
+--- npc/re/merchants/hd_refiner.txt	(revisão 65528)
++++ npc/re/merchants/hd_refiner.txt	(cópia de trabalho)
+@@ -1,4 +1,4 @@
+-//===== rAthena Script ======================================= 
++//===== rAthena Script =======================================
+ //= HD Refiners
+ //===== Description: =========================================
+ //= [Official Conversion]
+@@ -28,9 +28,9 @@
+ 	mes "So lets kick this into overdrive, what d' ya say? What item do you want to refine?";
+ 	next;
+ 	setarray .@indices[1], EQI_HEAD_TOP, EQI_ARMOR, EQI_HAND_L, EQI_HAND_R, EQI_GARMENT, EQI_SHOES, EQI_ACC_L, EQI_ACC_R, EQI_HEAD_MID, EQI_HEAD_LOW;
+-	for(set .@i,1; .@i<=10; set .@i,.@i+1)
+-		set .@menu$, .@menu$ + ( getequipisequiped(.@indices[.@i]) ? getequipname(.@indices[.@i]) : F_getpositionname(.@indices[.@i]) +"-[Not equipped]" ) +":";
+-	set .@part, .@indices[ select(.@menu$) ];
++	for ( .@i = 1; .@i <= 10; ++.@i )
++		.@menu$ = .@menu$ + ( getequipisequiped(.@indices[.@i]) ? getequipname(.@indices[.@i]) : F_getpositionname(.@indices[.@i]) + "-[Not equipped]" ) + ":";
++	.@part = .@indices[ select(.@menu$) ];
+ 	if (!getequipisequiped(.@part)) {
+ 		mes "[Blacksmith Mighty Hammer]";
+ 		switch(.@part) {
+@@ -68,46 +68,71 @@
+ 		mes "This item can't be refined.";
+ 		close;
+ 	}
+-	if (getequiprefinerycnt(.@part) < 7 || getequiprefinerycnt(.@part) > 9) {
++	.@weapon_lvl = getequipweaponlv(.@part);
++	.@bb = getblacksmithblessing(.@weapon_lvl,.@refine_count);
++	if (!.@bb) {
+ 		mes "[Blacksmith Mighty Hammer]";
+ 		mes "I only handle items with refine levels from +7 to +9.";
+ 		close;
+ 	}
+-	
++
+ 	.@refineitemid = getequipid(.@part); // save id of the item
+ 	.@refinerycnt = getequiprefinerycnt(.@part); //save refinery count
+ 	setarray .@card[0], getequipcardid(.@part,0), getequipcardid(.@part,1), getequipcardid(.@part,2), getequipcardid(.@part,3);
+ 	.@price = getequiprefinecost(.@part, REFINE_COST_HD, REFINE_ZENY_COST);
+ 	.@material = getequiprefinecost(.@part, REFINE_COST_HD, REFINE_MATERIAL_ID);
+-	
++
+ 	mes "[Blacksmith Mighty Hammer]";
+-	mes "In order to refine the gear you selected you need ^ff9999"+getitemname(.@material)+"^000000 and 20,000 zeny as a fee.";
++	mes "In order to refine the gear you selected you need ^ff9999" + getitemname(.@material) + "^000000 and 20,000 zeny as a fee.";
+ 	mes "Do you have them ready?";
+ 	next;
+-	if(select("Yes:No") == 2) {
++	if (select("Yes:No") == 2) {
+ 		mes "[Blacksmith Mighty Hammer]";
+ 		mes "I will wait until you are ready.";
+ 		close;
+ 	}
+-	if (getequippercentrefinery(.@part) < 100) {
++	if (getequippercentrefinery(.@part, REFINE_COST_HD) < 100) {
+ 		mes "[Blacksmith Mighty Hammer]";
+ 		mes "It looks like this item will likely fail to be refined.";
+ 		mes "Well, even if it fails, it only decreases by 1 refine level.";
+ 		mes "Would you like to continue refining?";
+ 		next;
+-		if(select("Yes:No") == 2) {
++		if (countitem(.@refinebb[0]) < .@refinebb[1])
++			setarray .@menu$[1], "Yes", "Not yet";
++		else {
+ 			mes "[Blacksmith Mighty Hammer]";
++			mes "Ah! is it the ^0000ffBlacksmith Blessing^000000?";
++			mes "With the Blacksmith Blessing, the equipment won't vanish if the refine is failed!";
++			next;
++			mes "[Blacksmith Mighty Hammer]";
++			if (.@weapon_lvl < 1 || .@weapon_lvl > 4)
++				mes "For +" + getequiprefinerycnt(.@part) + " equipment, refine with^316AC5 " + .@refinebb[1] + " unit(s) Blacksmith Blessing^000000 can prevent the equipment to be vanished. Do you want use it to refine?";
++			else
++				mes "For +" + getequiprefinerycnt(.@part) + " weapon, refine with^316AC5 " + .@refinebb[1] + " unit(s) Blacksmith Blessing^000000 can prevent the equipment to be vanished. Do you want use it to refine?";
++			next;
++			setarray .@menu$[0], "Use it to refine", "Refine directly without it", "Don't refine yet";
++		}
++		switch( select(.@menu$[0], .@menu$[1], .@menu$[2]) ) {
++		case 1:
++			.@bless_who = 1;
++			break;
++		case 2:
++			break;
++		case 3:
++			mes "[Blacksmith Mighty Hammer]";
+ 			mes "Only those who overcome fear of failure will obtain a masterpiece.";
+ 			close;
+ 		}
+ 	}
+-	if (countitem(.@material) == 0 || Zeny < .@price) {
++	if ((.@bless_who && countitem(.@refinebb[0]) < .@refinebb[1]) || countitem(.@material) == 0 || Zeny < .@price) {
+ 		mes "[Blacksmith Mighty Hammer]";
+ 		mes "Didn't you just say you had everything ready?";
+ 		close;
+ 	}
++	if (.@bless_who)
++		delitem .@refinebb[0],.@refinebb[1];
+ 	delitem .@material,1;
+-	set Zeny, Zeny-.@price;
++	Zeny = Zeny - .@price;
+ 
+ 	// anti-hack
+ 	if (callfunc("F_IsEquipIDHack", .@part, .@refineitemid) || callfunc("F_IsEquipCardHack", .@part, .@card[0], .@card[1], .@card[2], .@card[3]) ||
+@@ -122,7 +147,7 @@
+ 
+ 	mes "[Blacksmith Mighty Hammer]";
+ 	mes "Tac! Tac! Tac!";
+-	if (getequippercentrefinery(.@part, true) > rand(100)) {
++	if (getequippercentrefinery(.@part, REFINE_COST_HD) > rand(100)) {
+ 		successrefitem .@part;
+ 		next;
+ 		emotion ET_BEST;
+@@ -131,6 +156,17 @@
+ 		mes "Here, have it. Refine succeeded flawlessly!";
+ 		close;
+ 	}
++	if (.@bless_who == 1) {
++		specialeffect EF_HOLYHIT;
++		next;
++		emotion ET_HUK;
++		mes "[Blacksmith Mighty Hammer]";
++		mes "What?!!";
++		next;
++		mes "[Blacksmith Mighty Hammer]";
++		mes "Aiya! I am faceless now. HmHm.";
++		close;
++	}
+ 	downrefitem .@part;
+ 	next;
+ 	emotion ET_HUK;
+@@ -141,16 +177,16 @@
+ 	mes "I am sure a person like you would never blame me for a decrease in refine level by 1. Hmm.";
+ 	close;
+ }
+-prt_in,59,54,3	duplicate(MightyHammer)	Mighty Hammer#prt	826
+-morocc_in,65,30,3	duplicate(MightyHammer)	Mighty Hammer#morocc	826
+-payon,148,176,3	duplicate(MightyHammer)	Mighty Hammer#pay	826
+-alberta_in,16,56,3	duplicate(MightyHammer)	Mighty Hammer#alb	826
+-yuno_in01,171,18,3	duplicate(MightyHammer)	Mighty Hammer#yuno	826
+-ein_in01,22,82,3	duplicate(MightyHammer)	Mighty Hammer#ein	826
+-lhz_in02,280,19,3	duplicate(MightyHammer)	Mighty Hammer#lhz	826
++prt_in,59,54,3	duplicate(MightyHammer)	Mighty Hammer#prt	4_M_DWARF
++morocc_in,65,30,3	duplicate(MightyHammer)	Mighty Hammer#morocc	4_M_DWARF
++payon,148,176,3	duplicate(MightyHammer)	Mighty Hammer#pay	4_M_DWARF
++alberta_in,16,56,3	duplicate(MightyHammer)	Mighty Hammer#alb	4_M_DWARF
++yuno_in01,171,18,3	duplicate(MightyHammer)	Mighty Hammer#yuno	4_M_DWARF
++ein_in01,22,82,3	duplicate(MightyHammer)	Mighty Hammer#ein	4_M_DWARF
++lhz_in02,280,19,3	duplicate(MightyHammer)	Mighty Hammer#lhz	4_M_DWARF
+ 
+ // iRO NPC locations:
+-// payon,174,133,4	duplicate(MightyHammer)	Mighty Hammer#im	826
++// payon,174,133,4	duplicate(MightyHammer)	Mighty Hammer#im	4_M_DWARF
+ 
+ // Basta (+10 and up) :: cash_smelting
+ //============================================================
+@@ -165,9 +201,9 @@
+ 	mes "Which equipment do you want to refine?";
+ 	next;
+ 	setarray .@indices[1], EQI_HEAD_TOP, EQI_ARMOR, EQI_HAND_L, EQI_HAND_R, EQI_GARMENT, EQI_SHOES, EQI_ACC_L, EQI_ACC_R, EQI_HEAD_MID, EQI_HEAD_LOW;
+-	for(set .@i,1; .@i<=10; set .@i,.@i+1)
+-		set .@menu$, .@menu$ + ( getequipisequiped(.@indices[.@i]) ? getequipname(.@indices[.@i]) : F_getpositionname(.@indices[.@i]) +"-[Unequipped]" ) +":";
+-	set .@part, .@indices[ select(.@menu$) ];
++	for ( .@i = 1; .@i <= 10; ++.@i )
++		.@menu$ = .@menu$ + ( getequipisequiped(.@indices[.@i]) ? getequipname(.@indices[.@i]) : F_getpositionname(.@indices[.@i]) + "-[Unequipped]" ) + ":";
++	.@part = .@indices[ select(.@menu$) ];
+ 	if (!getequipisequiped(.@part)) {
+ 		mes "[Basta]";
+ 		switch(.@part) {
+@@ -205,12 +241,15 @@
+ 		mes "Even I cannot refine this item. There's no way.";
+ 		close;
+ 	}
+-	if (getequiprefinerycnt(.@part) < 10) {
++	.@refine_count = getequiprefinerycnt(.@part);
++	if (.@refine_count < 10) {
+ 		mes "[Basta]";
+ 		mes "Haven't I told you? I only refine equipments that are +10 and above.";
+ 		close;
+ 	}
+-	if (getequiprefinerycnt(.@part) == 20) {
++	.@weapon_lvl = getequipweaponlv(.@part);
++	.@bb = getblacksmithblessing(.@weapon_lvl,.@refine_count);
++	if (!.@bb) {
+ 		mes "[Basta]";
+ 		mes "This weapon is perfect, no need to refine it anymore~";
+ 		close;
+@@ -220,31 +259,24 @@
+ 	setarray .@card[0], getequipcardid(.@part,0), getequipcardid(.@part,1), getequipcardid(.@part,2), getequipcardid(.@part,3);
+ 	.@price = getequiprefinecost(.@part, REFINE_COST_OVER10_HD, REFINE_ZENY_COST);
+ 	.@material = getequiprefinecost(.@part, REFINE_COST_OVER10_HD, REFINE_MATERIAL_ID);
+-	switch(getequipweaponlv(.@part)) {
+-	default:
+-	case 0:
+-		set .@type$,"armor";
+-		break;
+-	case 1:
+-	case 2:
+-	case 3:
+-	case 4:
+-		set .@type$,"weapon";
+-		break;
+-	}
++
++	if (.@weapon_lvl < 1 || .@weapon_lvl > 4)
++		.@type$ = "armor";
++	else
++		.@type$ = "weapon";
+ 	mes "[Basta]";
+ 	mes "Hmm... is this the one you want to refine?";
+-	mes "To refine this equipment, I need 1 ^ff9999"+getitemname(.@material)+"^000000 and " + callfunc("F_InsertComma",.@price) + " zeny as a fee.";
++	mes "To refine this equipment, I need 1 ^ff9999" + getitemname(.@material) + "^000000 and " + callfunc("F_InsertComma",.@price) + " zeny as a fee.";
+ 	mes "Do you really want to refine this?";
+ 	next;
+-	if(select("Yes:No") == 2) {
++	if (select("Yes:No") == 2) {
+ 		mes "[Basta]";
+ 		mes "Okay. If that's what you want...";
+ 		close;
+ 	}
+-	if (getequippercentrefinery(.@part, true) < 100) {
++	if (getequippercentrefinery(.@part, REFINE_COST_OVER10_HD) < 100) {
+ 		mes "[Basta]";
+-		mes "This "+.@type$+" has already been refined pretty high.";
++		mes "This " + .@type$ + " has already been refined pretty high.";
+ 		mes "If you try to refine it more, the refine level could decrease.";
+ 		next;
+ 		mes "[Basta]";
+@@ -252,25 +284,45 @@
+ 		mes "It is impossible that the refine level will drop by, say, 3 or 4... that sounds scary.";
+ 		mes "Here it can only decrease by 1 level.";
+ 		next;
+-		mes "[Basta]";
+-		mes "Compared to other blacksmiths, the risk is smaller.";
+-		mes "I've given all precautions. Do you want to try it?";
+-		next;
+-		if(select("Yes:No") == 2) {
++		if (.@refinebb[1] == 0 || countitem(.@refinebb[0]) < .@refinebb[1]) {
+ 			mes "[Basta]";
++			mes "Compared to other blacksmiths, the risk is smaller.";
++			mes "I've given all precautions. Do you want to try it?";
++			next;
++			setarray .@menu$[1], "Yes", "No";
++		}
++		else {
++			mes "[Basta]";
++			mes "Woh~ is it the ^316AC5Blacksmith Blessing^000000? It is difficult to get it~ But, you has get it!";
++			next;
++			mes "[Basta]";
++			mes "For +" + .@refine_count + " " + .@type$ + " need ^316AC5" + .@refinebb[1] + " unit(s) Blacksmith Blessing^000000 can prevent the equipment is vanished. Do you want to refine with Blacksmith Blessing?";
++			next;
++			setarray .@menu$[0], "Refine with Blacksmith Blessing", "Refine without Blacksmith Blessing", "Don't refine yet";
++		}
++		switch( select(.@menu$[0], .@menu$[1], .@menu$[2]) ) {
++		case 1:
++			.@bless_who = 1;
++			break;
++		case 2:
++			break;
++		case 3:
++			mes "[Basta]";
+ 			mes "Well~";
+ 			mes "Not challenging at all could also be a kind of wisdom in life.";
+ 			close;
+ 		}
+ 	}
+-	if (countitem(.@material) == 0 || Zeny < .@price) {
++	if ((.@bless_who && countitem(.@refinebb[0]) < .@refinebb[1]) || countitem(.@material) == 0 || Zeny < .@price) {
+ 		mes "[Basta]";
+ 		mes "Hmm... You didn't bring all the materials needed.";
+ 		mes "Come back when you have them all.";
+ 		close;
+ 	}
++	if (.@bless_who)
++		delitem .@refinebb[0],.@refinebb[1];
+ 	delitem .@material,1;
+-	set Zeny, Zeny-.@price;
++	Zeny = Zeny - .@price;
+ 
+ 	// anti-hack
+ 	if (callfunc("F_IsEquipIDHack", .@part, .@refineitemid) || callfunc("F_IsEquipCardHack", .@part, .@card[0], .@card[1], .@card[2], .@card[3]) ||
+@@ -284,7 +336,7 @@
+ 	}
+ 
+ 	mes "Pow! Pow! Pow! Pow!";
+-	if (getequippercentrefinery(.@part, true) > rand(100)) {
++	if (getequippercentrefinery(.@part, REFINE_COST_OVER10_HD) > rand(100)) {
+ 		successrefitem .@part;
+ 		next;
+ 		emotion ET_BEST;
+@@ -293,16 +345,30 @@
+ 		mes "I really am the best blacksmith in the whole wide world!";
+ 		close;
+ 	}
+-	downrefitem .@part;
+-	next;
+-	emotion (!rand(5))?ET_MONEY:ET_HUK;
+-	mes "[Basta]";
+-	mes "Aaaaaaaaaaak!!!";
+-	next;
+-	mes "[Basta]";
+-	mes "Damn it!";
+-	mes "Refining failed and refine level has decreased!";
+-	mes "Even the best blacksmith in the world doesn't guarantee 100% success!";
++	if (.@bless_who == 1) {
++		specialeffect EF_HOLYHIT;
++		next;
++		emotion (!rand(5))?ET_MONEY:ET_HUK;
++		mes "[Basta]";
++		mes "Aaaaaaaaaaak!!!";
++		next;
++		mes "[Basta]";
++		mes "Refining is failed!";
++		mes "The best blacksmith in the world like me...";
++		mes "doesn't guarantee 100% success~";
++	}
++	else {
++		downrefitem .@part;
++		next;
++		emotion (!rand(5))?ET_MONEY:ET_HUK;
++		mes "[Basta]";
++		mes "Aaaaaaaaaaak!!!";
++		next;
++		mes "[Basta]";
++		mes "Damn it!";
++		mes "Refining failed and refine level has decreased!";
++		mes "Even the best blacksmith in the world doesn't guarantee 100% success!";
++	}
+ 	mes "Too bad.";
+ 	next;
+ 	mes "[Basta]";
+@@ -309,10 +375,22 @@
+ 	mes "I'll do better next time! Don't worry!";
+ 	close;
+ }
+-prt_in,57,54,3	duplicate(Basta)	Basta#prt	826
+-morocc_in,68,30,3	duplicate(Basta)	Basta#morocc	826
+-payon,148,174,3	duplicate(Basta)	Basta#payon	826
+-alberta_in,18,56,3	duplicate(Basta)	Basta#alberta	826
+-yuno_in01,173,18,3	duplicate(Basta)	Basta#yuno	826
+-ein_in01,24,82,3	duplicate(Basta)	Basta#einbroch	826
+-lhz_in02,280,17,3	duplicate(Basta)	Basta#lighthalzen	826
++
++prt_in,57,54,3	duplicate(Basta)	Basta#prt	4_M_DWARF
++morocc_in,68,30,3	duplicate(Basta)	Basta#morocc	4_M_DWARF
++payon,148,174,3	duplicate(Basta)	Basta#payon	4_M_DWARF
++alberta_in,18,56,3	duplicate(Basta)	Basta#alberta	4_M_DWARF
++yuno_in01,173,18,3	duplicate(Basta)	Basta#yuno	4_M_DWARF
++ein_in01,24,82,3	duplicate(Basta)	Basta#einbroch	4_M_DWARF
++lhz_in02,280,17,3	duplicate(Basta)	Basta#lighthalzen	4_M_DWARF
++
++// Refine UI makes these NPCs useless
++-	script	RefineUI_Init	-1,{
++	end;
++OnInit:
++	if (getbattleflag("feature.refineui") == 3) {
++		unloadnpc "Basta";
++		unloadnpc "MightyHammer";
++	}
++	end;
++}
+Index: npc/re/merchants/refine.txt
+===================================================================
+--- npc/re/merchants/refine.txt	(revisão 65528)
++++ npc/re/merchants/refine.txt	(cópia de trabalho)
+@@ -125,7 +125,7 @@
+ 		close;
+ 	}
+ 	if (getarg(1) != 1) {
+-		if (getequippercentrefinery(.@part) < 100) {
++		if (getequippercentrefinery(.@part, REFINE_COST_OVER10) < 100) {
+ 			mes "["+ .@npc_name$ +"]";
+ 			mes "This "+.@type$+" already has been refined serveral times.";
+ 			mes "It could be destroyed if I try again.";
+@@ -166,7 +166,7 @@
+ 			close;
+ 		}
+ 
+-		if (getequippercentrefinery(.@part) > rand(100)) {
++		if (getequippercentrefinery(.@part, REFINE_COST_OVER10) > rand(100)) {
+ 			mes "Clang! Clang! Clang! Clang!";
+ 			successrefitem .@part;
+ 			next;
+@@ -277,7 +277,7 @@
+ 		    callfunc("F_IsEquipRefineHack", .@part, .@refinerycnt))
+ 			close;
+ 
+-		if (getequipid(.@part) != .@refineitemid || (.@menu2 == 1 && getequippercentrefinery(.@part) < 100)) {
++		if (getequipid(.@part) != .@refineitemid || (.@menu2 == 1 && getequippercentrefinery(.@part, REFINE_COST_OVER10) < 100)) {
+ 			mes "["+ .@npc_name$ +"]";
+ 			mes "Clang... No, but did you imagine I could be so stupid?!";
+ 			mes "You changed it...";
+@@ -284,7 +284,7 @@
+ 			mes "Get out before I stun you with my Hammer!!";
+ 			close;
+ 		}
+-		if (getequippercentrefinery(.@part) > rand(100)) {
++		if (getequippercentrefinery(.@part, REFINE_COST_OVER10) > rand(100)) {
+ 			mes "Clang! Clang! Clang! Clang!";
+ 			successrefitem .@part;
+ 			.@refinecnt = .@refinecnt - 1;
+@@ -485,7 +485,7 @@
+ 		mes "I knew you were not worth trying my magical refining hammer for.";
+ 		close;
+ 	}
+-	if (getequippercentrefinery(.@part) < 100) {
++	if (getequippercentrefinery(.@part, REFINE_COST_NORMAL) < 100) {
+ 		mes "[Clink]";
+ 		mes "Wow!!";
+ 		mes "This "+.@type$+" has been refined quite a bit, huh?";
+@@ -524,7 +524,7 @@
+ 		close;
+ 	}
+ 
+-	if (getequippercentrefinery(.@part) <= rand(100)) {
++	if (getequippercentrefinery(.@part, REFINE_COST_NORMAL) <= rand(100)) {
+ 		failedrefitem .@part;
+ 		mes "[Clink]";
+ 		mes "Cry Hammer!! Cry!!!";
+Index: npc/re/merchants/shadow_refiner.txt
+===================================================================
+--- npc/re/merchants/shadow_refiner.txt	(revisão 65528)
++++ npc/re/merchants/shadow_refiner.txt	(cópia de trabalho)
+@@ -56,7 +56,6 @@
+ 		.@material[0] = getequiprefinecost(.@part, REFINE_COST_NORMAL, REFINE_MATERIAL_ID);
+ 		.@material[1] = getequiprefinecost(.@part, REFINE_COST_ENRICHED, REFINE_MATERIAL_ID);
+ 		.@material[2] = getequiprefinecost(.@part, REFINE_COST_HD, REFINE_MATERIAL_ID);
+-		.@is_enriched = false;
+ 
+ 		if (countitem(.@material[0]))
+ 			.@mate$[0] = getitemname(.@material[0]);
+@@ -74,19 +73,21 @@
+ 		switch( select( .@mate$[0], .@mate$[1], .@mate$[2], "Cancel" ) ) {
+ 		case 1:// NORMAL
+ 			.@choose = .@material[0];
++			.@refine_type = REFINE_COST_NORMAL;
+ 			break;
+ 		case 2:// ENRICHED
+-			.@is_enriched = true;
+ 			.@choose = .@material[1];
++			.@refine_type = REFINE_COST_ENRICHED;
+ 			break;
+ 		case 3:// HD
+ 			if (.@equip_refine < 7) {
+ 				mes "[Shadow Blacksmith]";
+-				mes "HD Ore can only used for +7 or higher refine level items.";
++				mes "You've cancelled refining.";
+ 				close;
+ 			}
+ 			.@hoihoi = 1;
+ 			.@choose = .@material[2];
++			.@refine_type = REFINE_COST_HD;
+ 			break;
+ 		case 4:
+ 			mes "[Shadow Blacksmith]";
+@@ -113,7 +114,7 @@
+ 			mes "This item cannot be refined.";
+ 			close;
+ 		}
+-		if (getequippercentrefinery(.@part) < 100) {
++		if (getequippercentrefinery(.@part, .@refine_type) < 100) {
+ 			mes "[Shadow Blacksmith]";
+ 			mes "The safety refine level for Shadow Equipment is +4.";
+ 			if (!.@hoihoi)
+@@ -137,7 +138,7 @@
+ 		if (callfunc("F_IsEquipIDHack", .@part, .@equip_id) || callfunc("F_IsEquipCardHack", .@part, .@card[0], .@card[1], .@card[2], .@card[3]) || callfunc("F_IsEquipRefineHack", .@part, .@equip_refine))
+ 			close;
+ 
+-		if (getequippercentrefinery(.@part, .@is_enriched) > rand(100)) {
++		if (getequippercentrefinery(.@part, .@refine_type) > rand(100)) {
+ 			successrefitem .@part;
+ 			mes "[Shadow Blacksmith]";
+ 			mes "It worked! It worked!";
+Index: src/map/atcommand.cpp
+===================================================================
+--- src/map/atcommand.cpp	(revisão 65528)
++++ src/map/atcommand.cpp	(cópia de trabalho)
+@@ -10165,6 +10165,33 @@
+ 	return 0;
+ }
+ 
++/**
++ * Opens the refineUI
++ * Usage: @refineui
++ */
++ACMD_FUNC(refineui)
++{
++	nullpo_retr(-1, sd);
++
++#if PACKETVER < 20161012
++	clif_displaymessage(fd, msg_txt(sd, 773)); // This command requires packet version 2016-10-12 or newer.
++	return -1;
++#else
++	if( !battle_config.feature_refineui ){
++		clif_displaymessage(fd, msg_txt(sd, 774)); // This command is disabled via configuration.
++		return -1;
++	}
++
++	if( sd->state.refineui_open ){
++		clif_displaymessage(fd, msg_txt(sd, 775)); // You have already opened the refine UI.
++		return -1;
++	}
++
++	clif_refineui_open(sd);
++	return 0;
++#endif
++}
++
+ ACMD_FUNC(quest) {
+ 	uint8 i;
+ 	int quest_id = 0;
+@@ -10528,6 +10555,7 @@
+ 		ACMD_DEFR(changedress, ATCMD_NOCONSOLE|ATCMD_NOAUTOTRADE),
+ 		ACMD_DEFR(camerainfo, ATCMD_NOCONSOLE|ATCMD_NOAUTOTRADE),
+ 		ACMD_DEFR(resurrect, ATCMD_NOCONSOLE),
++		ACMD_DEFR(refineui, ATCMD_NOCONSOLE|ATCMD_NOAUTOTRADE),
+ 		ACMD_DEF2("setquest", quest),
+ 		ACMD_DEF2("erasequest", quest),
+ 		ACMD_DEF2("completequest", quest),
+Index: src/map/battle.cpp
+===================================================================
+--- src/map/battle.cpp	(revisão 65528)
++++ src/map/battle.cpp	(cópia de trabalho)
+@@ -8916,7 +8916,7 @@
+ 	{ "guild_alliance_onlygm",              &battle_config.guild_alliance_onlygm,           0,      0,      1, },
+ 	{ "feature.achievement",                &battle_config.feature_achievement,             1,      0,      1,              },
+ 	{ "allow_bound_sell",                   &battle_config.allow_bound_sell,                0,      0,      0xF,            },
+-	{ "event_refine_chance",                &battle_config.event_refine_chance,             0,      0,      1,              },
++	{ "feature.refineui",                   &battle_config.feature_refineui,                3,      0,      3,              },
+ 	{ "autoloot_adjust",                    &battle_config.autoloot_adjust,                 0,      0,      1,              },
+ 	{ "feature.petevolution",               &battle_config.feature_petevolution,            1,      0,      1,              },
+ 	{ "feature.petautofeed",                &battle_config.feature_pet_autofeed,            1,      0,      1,              },
+@@ -9127,6 +9127,19 @@
+ 	}
+ #endif
+ 
++#if PACKETVER < 20161012
++	if (battle_config.feature_refineui) {
++		ShowWarning("conf/battle/feature.conf refine UI is enabled but it requires PACKETVER 2016-10-12 or newer, disabling...\n");
++		battle_config.feature_refineui = 0;
++	}
++#else
++	// Check if Refine UI is only enabled in scripts
++	if( battle_config.feature_refineui == 2 ){
++		ShowWarning("conf/battle/feature.conf refine UI is enabled in scripts but disabled in general, enabling...\n");
++		battle_config.feature_refineui = 3;
++	}
++#endif
++
+ #ifndef CELL_NOSTACK
+ 	if (battle_config.custom_cell_stack_limit != 1)
+ 		ShowWarning("Battle setting 'custom_cell_stack_limit' takes no effect as this server was compiled without Cell Stack Limit support.\n");
+Index: src/map/battle.hpp
+===================================================================
+--- src/map/battle.hpp	(revisão 65528)
++++ src/map/battle.hpp	(cópia de trabalho)
+@@ -646,7 +646,7 @@
+ 	int guild_alliance_onlygm;
+ 	int feature_achievement;
+ 	int allow_bound_sell;
+-	int event_refine_chance;
++	int feature_refineui;
+ 	int autoloot_adjust;
+ 	int feature_petevolution;
+ 	int feature_pet_autofeed;
+Index: src/map/clif.cpp
+===================================================================
+--- src/map/clif.cpp	(revisão 65528)
++++ src/map/clif.cpp	(cópia de trabalho)
+@@ -6525,6 +6525,7 @@
+ ///     0 = success
+ ///     1 = failure
+ ///     2 = downgrade
++///     3 = failure without breaking nor downgrade
+ void clif_refine(int fd, int fail, int index, int val)
+ {
+ 	WFIFOHEAD(fd,packet_len(0x188));
+@@ -21301,6 +21302,365 @@
+ 	return 0;
+ }
+ 
++/**
++ * Opens the refine UI on the designated client.
++ * 0aa0
++ */
++void clif_refineui_open( struct map_session_data* sd ){
++#if PACKETVER >= 20161012
++	int fd = sd->fd;
++
++	WFIFOHEAD(fd,packet_len(0x0AA0));
++	WFIFOW(fd,0) = 0x0AA0;
++	WFIFOSET(fd,packet_len(0x0AA0));
++
++	sd->state.refineui_open = true;
++#endif
++}
++
++/**
++ * Parses cancel/close of the refine UI on client side.
++ * 0aa4
++ */
++void clif_parse_refineui_close( int fd, struct map_session_data* sd ){
++#if PACKETVER >= 20161012
++	sd->state.refineui_open = false;
++#endif
++}
++
++#define REFINEUI_MAT_BS_BLESS 4
++#define REFINEUI_MAT_CNT (REFINEUI_MAT_BS_BLESS+1)
++
++/**
++ * Structure to store all required data about refine requirements
++ */
++struct refine_materials {
++	struct refine_cost cost;
++	uint8 chance;
++	struct refine_bs_blessing bs_bless;
++};
++
++/**
++ * Fills the given index with the requested data for that item and
++ * returns true on success or false on failure.
++ */
++static inline bool clif_refineui_materials_sub( struct item *item, struct item_data *id, struct refine_materials materials[REFINEUI_MAT_CNT], int index, enum refine_cost_type type ){
++	if( index < 0 || index >= REFINEUI_MAT_CNT ){
++		return false;
++	}
++
++	struct refine_cost *cost = status_get_refine_cost_((enum refine_type)id->refine_type, type);
++	if (!cost || !cost->refineui)
++		return false;
++	memcpy(&materials[index].cost, cost, sizeof(struct refine_cost));
++
++	// Get the chance for refining the item with this material
++	materials[index].chance = status_get_refine_chance((enum refine_type)id->refine_type, item->refine, type);
++
++	// Either of the values was not set
++	if( materials[index].cost.nameid == 0 || materials[index].cost.zeny == 0 || materials[index].chance == 0 ){
++		// Reset all entries properly
++		materials[index].cost.nameid = materials[index].cost.zeny = materials[index].chance = 0;
++		return false;
++	}else{
++		// Everything was set properly
++		return true;
++	}
++}
++
++/**
++ * Calculates all possible materials for the given item.
++ * Returns the count of materials that were filled in the materials array.
++ */
++static inline uint8 clif_refineui_materials( struct item *item, struct item_data *id, struct refine_materials materials[REFINEUI_MAT_CNT] ){
++	// Initialize the counter
++	uint8 count = 0;
++
++	// Zero the memory
++	memset( materials, 0, sizeof(struct refine_materials)*REFINEUI_MAT_CNT );
++
++	/**
++	 * Default material indexing is follow as
++	 * 0: Normal refine for +1 ~ +10 or +11 ~ +20
++	 * 1: HD materials for +7 ~ +9 and +11 ~ +20
++	 * 2: Enriched
++	 * 3: Undecided yet, you can add yours later
++	 * 4: Is always for 'Blacksmith Blessing' item to prevent downrefine/break
++	 **/
++
++	for (int i = 0; i < REFINE_COST_MAX; i++) {
++		if (clif_refineui_materials_sub(item, id, materials, count, (enum refine_cost_type)i))
++			count++;
++	}
++
++	// Blacksmith Blessing requirements if any
++	status_get_refine_blacksmithBlessing(&materials[REFINEUI_MAT_BS_BLESS].bs_bless, (enum refine_type)id->wlv, item->refine);
++
++	// Return the amount of found materials
++	return count;
++}
++
++void clif_refineui_notrefineable(struct map_session_data *sd, uint16 index) {
++	int fd = sd->fd;
++	WFIFOHEAD(fd, 7);
++	WFIFOW(fd, 0) = 0x0AA2;
++	WFIFOW(fd, 2) = 7;
++	WFIFOW(fd, 4) = index + 2;
++	WFIFOB(fd, 6) = 0;
++	WFIFOSET(fd, 7);
++}
++
++/**
++ * Adds the selected item into the refine UI and sends the possible materials
++ * to the client.
++ * 0aa2 <length>.W <index>.W <catalyst count>.B { <material>.W <chance>.B <price>.L }*
++ */
++void clif_refineui_info( struct map_session_data* sd, uint16 index ){
++	int fd = sd->fd;
++	struct item *item;
++	struct item_data *id;
++	struct refine_materials materials[REFINEUI_MAT_CNT];
++	uint8 material_count;
++
++	// Get the item db reference
++	id = sd->inventory_data[index];
++
++	// No item data was found
++	if( id == NULL || id->refine_type == REFINE_TYPE_MAX){
++		return;
++	}
++
++	// Check if the item can be refined
++	if( id->flag.no_refine ){
++		clif_refineui_notrefineable(sd, index);
++		return;
++	}
++
++	// Check the inventory
++	item = &sd->inventory.u.items_inventory[index];
++
++	// No item was found at the given index
++	if( item == NULL ){
++		return;
++	}
++
++	// Check if the item is identified
++	if( !item->identify ){
++		clif_refineui_notrefineable(sd, index);
++		return;
++	}
++
++	// Check if the item is broken
++	if( item->attribute ){
++		clif_refineui_notrefineable(sd, index);
++		return;
++	}
++
++	// Check the current refine level
++	if( item->refine < 0 || item->refine >= MAX_REFINE ){
++		clif_refineui_notrefineable(sd, index);
++		return;
++	}
++
++	// Calculate the possible materials
++	material_count = clif_refineui_materials( item, id, materials );
++
++	// No possibilities were found
++	if( material_count == 0 ){
++		clif_refineui_notrefineable(sd, index);
++		return;
++	}
++
++	uint16 length = sizeof( struct PACKET_ZC_REFINE_ADD_ITEM ) + material_count * sizeof( struct PACKET_ZC_REFINE_ADD_ITEM_SUB );
++
++	WFIFOHEAD( fd, length );
++
++	struct PACKET_ZC_REFINE_ADD_ITEM* p = (struct PACKET_ZC_REFINE_ADD_ITEM*)WFIFOP( fd, 0 );
++
++	p->packetType = HEADER_ZC_REFINE_ADD_ITEM;
++	p->packtLength = length;
++	p->itemIndex = client_index( index );
++	p->blacksmithBlessing = (uint8)materials[REFINEUI_MAT_BS_BLESS].bs_bless.count;
++
++	for( uint8 i = 0; i < material_count; i++ ){
++		p->req[i].itemId = client_nameid( materials[i].cost.nameid );
++		p->req[i].chance = materials[i].chance;
++		p->req[i].zeny = materials[i].cost.zeny;
++	}
++
++	WFIFOSET( fd, p->packtLength );
++}
++
++/**
++ * Client request to add an item to the refine UI.
++ * 0aa1 <index>.W
++ */
++void clif_parse_refineui_add( int fd, struct map_session_data* sd ){
++#if PACKETVER >= 20161012
++	uint16 index = server_index( RFIFOW( fd, 2 ) );
++
++	// Check if the refine UI is open
++	if( !sd->state.refineui_open ){
++		return;
++	}
++
++	// Check if the index is valid
++	if( index >= MAX_INVENTORY ){
++		return;
++	}
++
++	// Send out the requirements for the refine process
++	clif_refineui_info( sd, index );
++#endif
++}
++
++/**
++ * Client requests to try to refine an item.
++ * 0aa3 <index>.W <material>.W <catalyst>.B
++ */
++void clif_parse_refineui_refine( int fd, struct map_session_data* sd ){
++#if PACKETVER >= 20161012
++	struct PACKET_CZ_REFINE_ITEM_REQUEST* p = (struct PACKET_CZ_REFINE_ITEM_REQUEST*)RFIFOP( fd, 0 );
++
++	uint16 index = server_index( p->index );
++	uint16 material = p->itemId;
++	bool use_blacksmith_blessing = p->blacksmithBlessing != 0;
++	struct refine_materials materials[REFINEUI_MAT_CNT];
++	uint8 i, material_count;
++	uint16 j;
++	struct item *item;
++	struct item_data *id;
++
++	// Check if the refine UI is open
++	if( !sd->state.refineui_open ){
++		return;
++	}
++
++	// Check if the index is valid
++	if( index >= MAX_INVENTORY ){
++		return;
++	}
++
++	// Get the item db reference
++	id = sd->inventory_data[index];
++
++	// No item data was found
++	if( id == NULL || id->refine_type == REFINE_TYPE_MAX){
++		return;
++	}
++
++	// Check if the item can be refined
++	if( id->flag.no_refine ){
++		return;
++	}
++
++	// Check the inventory
++	item = &sd->inventory.u.items_inventory[index];
++
++	// No item was found at the given index
++	if( item == NULL ){
++		return;
++	}
++
++	// Check if the item is identified
++	if( !item->identify ){
++		return;
++	}
++
++	// Check if the item is broken
++	if( item->attribute ){
++		return;
++	}
++
++	// Check the current refine level
++	if( item->refine < 0 || item->refine >= MAX_REFINE ){
++		return;
++	}
++
++	// Check if the player has the selected material
++	if( ( j = pc_search_inventory( sd, material ) ) < 0 ){
++		return;
++	}
++
++	// Calculate the possible materials
++	material_count = clif_refineui_materials( item, id, materials );
++
++	// No possibilities were found
++	if( material_count == 0 ){
++		return;
++	}
++
++	// Find the selected material
++	ARR_FIND( 0, REFINEUI_MAT_CNT, i, materials[i].cost.nameid == material );
++
++	// The material was not in the list of possible materials
++	if( i >= REFINEUI_MAT_CNT || i < 0 ){
++		return;
++	}
++
++	// Try to pay for the refine. By default, client checked if player has enough zeny or not
++	if( pc_payzeny( sd, materials[i].cost.zeny, LOG_TYPE_CONSUME, NULL ) ){
++		clif_npc_buy_result( sd, 1 ); // "You do not have enough zeny."
++		return;
++	}
++
++	// Delete the required material
++	if( pc_delitem( sd, j, 1, 0, 0, LOG_TYPE_CONSUME ) ){
++		return;
++	}
++
++	if (use_blacksmith_blessing && materials[REFINEUI_MAT_BS_BLESS].bs_bless.count) {
++		if ((j = pc_search_inventory(sd, materials[REFINEUI_MAT_BS_BLESS].bs_bless.nameid)) < 0) {
++			return;
++		}
++
++		if (pc_delitem(sd, j, materials[REFINEUI_MAT_BS_BLESS].bs_bless.count, 0, 0, LOG_TYPE_CONSUME)) {
++			return;
++		}
++	}
++	else {
++		use_blacksmith_blessing = false;
++	}
++
++	// Try to refine the item
++	if( materials[i].chance >= rnd() % 100 ){
++		// Success
++		item->refine = cap_value( item->refine + 1, 0, MAX_REFINE );
++		clif_misceffect( &sd->bl, 3 );
++		clif_refine( fd, 0, index, item->refine );
++		achievement_update_objective( sd, AG_REFINE_SUCCESS, 2, id->wlv, item->refine );
++		clif_refineui_info( sd, index );
++	}else{
++		// Failure
++
++		do {
++			if (!use_blacksmith_blessing) {
++				int r = rnd() % 100;
++				if (r < materials[i].cost.breaking) { // Breaking chance
++					clif_refine(fd, 1, index, item->refine);
++					pc_delitem(sd, index, 1, 0, 0, LOG_TYPE_CONSUME);
++					break;
++				}
++				else if (r < (materials[i].cost.breaking + materials[i].cost.downrefine)) { // Downrefine chance
++					item->refine = cap_value(item->refine - materials[i].cost.downrefine_num, 0, MAX_REFINE);
++					clif_refine(fd, 2, index, item->refine);
++					clif_refineui_info(sd, index);
++					break;
++				}
++			}
++			// Blacksmith Blessing were used, no break & no down refine
++			clif_refine(fd, 3, index, item->refine);
++			clif_refineui_info(sd, index);
++		} while (0);
++
++		clif_misceffect( &sd->bl, 2 );
++		achievement_update_objective( sd, AG_REFINE_FAIL, 1, 1 );
++	}
++#endif
++}
++
++#undef REFINEUI_MAT_CNT
++
+ /*==========================================
+  * Main client packet processing function
+  *------------------------------------------*/
+Index: src/map/clif.hpp
+===================================================================
+--- src/map/clif.hpp	(revisão 65528)
++++ src/map/clif.hpp	(cópia de trabalho)
+@@ -1074,6 +1074,9 @@
+ void clif_sale_amount(struct sale_item_data* sale_item, struct block_list* bl, enum send_target target);
+ void clif_sale_open(struct map_session_data* sd);
+ 
++// Refine UI
++void clif_refineui_open( struct map_session_data* sd );
++
+ /**
+  * Color Table
+  **/
+Index: src/map/clif_packetdb.hpp
+===================================================================
+--- src/map/clif_packetdb.hpp	(revisão 65528)
++++ src/map/clif_packetdb.hpp	(cópia de trabalho)
+@@ -2353,6 +2353,15 @@
+ 	packet(0x0A37,59);
+ #endif
+ 
++// 2016-10-12aRagexeRE
++#if PACKETVER >= 20161012
++	packet( HEADER_ZC_REFINE_OPEN_WINDOW, sizeof( struct PACKET_ZC_REFINE_OPEN_WINDOW ) );
++	parseable_packet( HEADER_CZ_REFINE_ADD_ITEM, sizeof( struct PACKET_CZ_REFINE_ADD_ITEM ), clif_parse_refineui_add, 0 );
++	packet( HEADER_ZC_REFINE_ADD_ITEM, -1 );
++	parseable_packet( HEADER_CZ_REFINE_ITEM_REQUEST, sizeof( struct PACKET_CZ_REFINE_ITEM_REQUEST ), clif_parse_refineui_refine, 0 );
++	parseable_packet( HEADER_CZ_REFINE_WINDOW_CLOSE, sizeof( struct PACKET_CZ_REFINE_WINDOW_CLOSE ), clif_parse_refineui_close, 0 );
++#endif
++
+ // 2016-10-26bRagexeRE
+ #if PACKETVER >= 20161026
+ 	packet(0x0AA5,-1);
+Index: src/map/itemdb.cpp
+===================================================================
+--- src/map/itemdb.cpp	(revisão 65528)
++++ src/map/itemdb.cpp	(cópia de trabalho)
+@@ -1292,6 +1292,16 @@
+ 	return;
+ }
+ 
++static inline uint8 itemdb_set_refine_type(int type, int wlv, int loc) {
++	if (type == IT_WEAPON)
++		return (enum refine_type)wlv;
++	if (type == IT_ARMOR)
++		return (loc&EQP_COSTUME) ? REFINE_TYPE_COSTUME : REFINE_TYPE_ARMOR;
++	if (type == IT_SHADOWGEAR)
++		return (loc == EQP_SHADOW_WEAPON) ? REFINE_TYPE_SHADOW_WEAPON : REFINE_TYPE_SHADOW;
++	return REFINE_TYPE_MAX;
++}
++
+ /**
+ * Processes one itemdb entry
+ */
+@@ -1426,6 +1436,8 @@
+ 	if (*str[21])
+ 		id->unequip_script = parse_script(str[21], source, line, scriptopt);
+ 
++	id->refine_type = itemdb_set_refine_type(id->type, id->wlv, id->equip);
++
+ 	if (!id->nameid) {
+ 		id->nameid = nameid;
+ 		uidb_put(itemdb, nameid, id);
+Index: src/map/itemdb.hpp
+===================================================================
+--- src/map/itemdb.hpp	(revisão 65528)
++++ src/map/itemdb.hpp	(cópia de trabalho)
+@@ -862,6 +862,7 @@
+ 	struct item_combo **combos;
+ 	unsigned char combos_count;
+ 	short delay_sc; ///< Use delay group if any instead using player's item_delay data [Cydh]
++	uint8 refine_type; /// pre-defined refine type, depreciate wlv for refine_info[] lookup. REFINE_TYPE_MAX for not IT_WEAPON, IT_ARMOR, or IT_SHADOWGEAR
+ 
+ 	bool isStackable();
+ 	int inventorySlotNeeded(int quantity);
+Index: src/map/pc.hpp
+===================================================================
+--- src/map/pc.hpp	(revisão 65528)
++++ src/map/pc.hpp	(cópia de trabalho)
+@@ -318,6 +318,7 @@
+ 		bool cashshop_open;
+ 		bool sale_open;
+ 		unsigned int block_action : 10;
++		bool refineui_open;
+ 	} state;
+ 	struct {
+ 		unsigned char no_weapon_damage, no_magic_damage, no_misc_damage;
+@@ -919,7 +920,7 @@
+ #define pc_isidle_party(sd)   ( (sd)->chatID || (sd)->state.vending || (sd)->state.buyingstore || DIFF_TICK(last_tick, (sd)->idletime) >= battle_config.idle_no_share )
+ #define pc_isidle_hom(sd)     ( (sd)->hd && ( (sd)->chatID || (sd)->state.vending || (sd)->state.buyingstore || DIFF_TICK(last_tick, (sd)->idletime_hom) >= battle_config.hom_idle_no_share ) )
+ #define pc_istrading(sd)      ( (sd)->npc_id || (sd)->state.vending || (sd)->state.buyingstore || (sd)->state.trading )
+-#define pc_cant_act(sd)       ( (sd)->npc_id || (sd)->state.vending || (sd)->state.buyingstore || (sd)->chatID || ((sd)->sc.opt1 && (sd)->sc.opt1 != OPT1_BURNING) || (sd)->state.trading || (sd)->state.storage_flag || (sd)->state.prevend )
++#define pc_cant_act(sd)       ( (sd)->npc_id || (sd)->state.vending || (sd)->state.buyingstore || (sd)->chatID || ((sd)->sc.opt1 && (sd)->sc.opt1 != OPT1_BURNING) || (sd)->state.trading || (sd)->state.storage_flag || (sd)->state.prevend || (sd)->state.refineui_open )
+ 
+ /* equals pc_cant_act except it doesn't check for chat rooms or npcs */
+ #define pc_cant_act2(sd)       ( (sd)->state.vending || (sd)->state.buyingstore || ((sd)->sc.opt1 && (sd)->sc.opt1 != OPT1_BURNING) || (sd)->state.trading || (sd)->state.storage_flag || (sd)->state.prevend )
+Index: src/map/script.cpp
+===================================================================
+--- src/map/script.cpp	(revisão 65528)
++++ src/map/script.cpp	(cópia de trabalho)
+@@ -9107,18 +9107,18 @@
+  * return (npc)
+  *	x : refine chance
+  *	0 : false (max refine level or unequip..)
+- * getequippercentrefinery(<equipment slot>{,<enriched>,<char_id>})
++ * getequippercentrefinery(<equipment slot>,<type>{,<char_id>})
+  *------------------------------------------*/
+ BUILDIN_FUNC(getequippercentrefinery)
+ {
+ 	int i = -1,num;
+-	bool enriched = false;
++	enum refine_cost_type cost_type = REFINE_COST_NORMAL;
+ 	TBL_PC *sd;
+ 
+ 	num = script_getnum(st,2);
+-	if (script_hasdata(st, 3))
+-		enriched = script_getnum(st, 3) != 0;
++	cost_type = (enum refine_cost_type)script_getnum(st, 3);
+ 
++
+ 	if (!script_charid2sd(4, sd)) {
+ 		script_pushint(st,0);
+ 		return SCRIPT_CMD_FAILURE;
+@@ -9127,10 +9127,7 @@
+ 	if (equip_index_check(num))
+ 		i = pc_checkequip(sd,equip_bitmask[num]);
+ 	if (i >= 0 && sd->inventory.u.items_inventory[i].nameid && sd->inventory.u.items_inventory[i].refine < MAX_REFINE) {
+-		enum refine_type type = REFINE_TYPE_SHADOW;
+-		if (sd->inventory_data[i]->type != IT_SHADOWGEAR)
+-			type = (enum refine_type)sd->inventory_data[i]->wlv;
+-		script_pushint(st, status_get_refine_chance(type, (int)sd->inventory.u.items_inventory[i].refine, enriched));
++		script_pushint(st, status_get_refine_chance((enum refine_type)sd->inventory_data[i]->refine_type, (int)sd->inventory.u.items_inventory[i].refine, cost_type));
+ 	}
+ 	else
+ 		script_pushint(st,0);
+@@ -24005,16 +24002,8 @@
+ 		return SCRIPT_CMD_SUCCESS;
+ 	}
+ 
+-	int weapon_lv = sd->inventory_data[i]->wlv;
+-	if (sd->inventory_data[i]->type == IT_SHADOWGEAR) {
+-		if (sd->inventory_data[i]->equip == EQP_SHADOW_WEAPON)
+-			weapon_lv = REFINE_TYPE_WEAPON4;
+-		else
+-			weapon_lv = REFINE_TYPE_SHADOW;
+-	}
++	script_pushint(st, status_get_refine_cost((enum refine_type)sd->inventory_data[i]->refine_type, type, (enum refine_info_type)info));
+ 
+-	script_pushint(st, status_get_refine_cost(weapon_lv, type, info != 0));
+-
+ 	return SCRIPT_CMD_SUCCESS;
+ }
+ 
+@@ -24548,6 +24537,62 @@
+ }
+ 
+ /*
++* getblacksmithblessing(<type>,<refine>{,<var>})
++* Return info Blacksmith Blessing in (specified) an array
++* .@refinebb[0] = Blacksmith Blessing ID
++* .@refinebb[1] = Amount
++*/
++BUILDIN_FUNC(getblacksmithblessing) {
++	struct refine_bs_blessing bb;
++	int type = script_getnum(st, 2);
++	int refine = script_getnum(st, 3);
++	struct script_data *data = script_hasdata(st, 4) ? script_getdata(st, 4) : NULL;
++	char *name;
++
++	memset(&bb, 0, sizeof(struct refine_bs_blessing));
++	if (!status_get_refine_blacksmithBlessing(&bb, (enum refine_type)type, refine)) {
++		script_pushint(st, 0);
++		return SCRIPT_CMD_FAILURE;
++	}
++
++	if (data && data_isreference(data)) {
++		name = reference_getname(data);
++		setd_sub_num(st, NULL, name, 0, bb.nameid, data->ref);
++		setd_sub_num(st, NULL, name, 1, bb.count, data->ref);
++	}
++	else {
++		setd_sub_num(st, NULL, ".@refinebb", 0, bb.nameid, NULL);
++		setd_sub_num(st, NULL, ".@refinebb", 1, bb.count, NULL);
++	}
++	script_pushint(st, (bb.nameid) ? 1 : 0);
++	return SCRIPT_CMD_SUCCESS;
++}
++
++BUILDIN_FUNC(refineui){
++#if PACKETVER < 20161012
++	ShowError( "buildin_refineui: This command requires packet version 2016-10-12 or newer.\n" );
++	return SCRIPT_CMD_FAILURE;
++#else
++	struct map_session_data* sd;
++
++	if( !script_charid2sd(2,sd) ){
++		return SCRIPT_CMD_FAILURE;
++	}
++
++	if( !battle_config.feature_refineui ){
++		ShowError( "buildin_refineui: This command is disabled via configuration.\n" );
++		return SCRIPT_CMD_FAILURE;
++	}
++
++	if( !sd->state.refineui_open ){
++		clif_refineui_open(sd);
++	}
++
++	return SCRIPT_CMD_SUCCESS;
++#endif
++}
++
++/*
+   convertpcinfo(<char_id>,<type>)
+   convertpcinfo(<account_id>,<type>)
+   convertpcinfo(<player_name>,<type>)
+@@ -24775,7 +24820,7 @@
+ 	BUILDIN_DEF(getequipisenableref,"i?"),
+ 	BUILDIN_DEF(getequiprefinerycnt,"i?"),
+ 	BUILDIN_DEF(getequipweaponlv,"i?"),
+-	BUILDIN_DEF(getequippercentrefinery,"i?"),
++	BUILDIN_DEF(getequippercentrefinery,"ii?"),
+ 	BUILDIN_DEF(successrefitem,"i??"),
+ 	BUILDIN_DEF(failedrefitem,"i?"),
+ 	BUILDIN_DEF(downrefitem,"i??"),
+@@ -25291,8 +25336,11 @@
+ 	BUILDIN_DEF(achievementexists,"i?"),
+ 	BUILDIN_DEF(achievementupdate,"iii?"),
+ 
++	// Refine UI
++	BUILDIN_DEF(getequiprefinecost,"iii?"),
++	BUILDIN_DEF(getblacksmithblessing, "ii"),
++	BUILDIN_DEF(refineui,"?"),
+ 
+-	BUILDIN_DEF(getequiprefinecost,"iii?"),
+ 	BUILDIN_DEF2(round, "round", "ii"),
+ 	BUILDIN_DEF2(round, "ceil", "ii"),
+ 	BUILDIN_DEF2(round, "floor", "ii"),
+Index: src/map/script_constants.hpp
+===================================================================
+--- src/map/script_constants.hpp	(revisão 65528)
++++ src/map/script_constants.hpp	(cópia de trabalho)
+@@ -5041,11 +5041,14 @@
+ 	export_constant(REFINE_COST_OVER10_HD);
+ 	export_constant(REFINE_COST_HOLINK);
+ 	export_constant(REFINE_COST_WAGJAK);
++	export_constant(REFINE_COST_BLESSED);
++	export_constant(REFINE_COST_EVT_ENRICHED);
++	export_constant(REFINE_COST_EVT_OVER10_HD);
+ 	export_constant(REFINE_COST_MAX);
+ 
+ 	/* refine information types */
+-	script_set_constant("REFINE_MATERIAL_ID", 0, false, false);
+-	script_set_constant("REFINE_ZENY_COST", 1, false, false);
++	export_constant(REFINE_MATERIAL_ID);
++	export_constant(REFINE_ZENY_COST);
+ 
+ 	/* NPC view ids */
+ 	// Special macro to strip the prefix 'JT_'
+@@ -7386,6 +7389,14 @@
+ 	export_constant(MD_STATUS_IMMUNE);
+ 	export_constant(MD_SKILL_IMMUNE);
+ 
++	export_constant(REFINE_TYPE_ARMOR);
++	export_constant(REFINE_TYPE_WEAPON1);
++	export_constant(REFINE_TYPE_WEAPON2);
++	export_constant(REFINE_TYPE_WEAPON3);
++	export_constant(REFINE_TYPE_WEAPON4);
++	export_constant(REFINE_TYPE_SHADOW);
++	export_constant(REFINE_TYPE_COSTUME);
++
+ 	/* guild storage flags */
+ 	export_constant(GSTORAGE_OPEN);
+ 	export_constant(GSTORAGE_STORAGE_ALREADY_OPEN);
+Index: src/map/skill.cpp
+===================================================================
+--- src/map/skill.cpp	(revisão 65528)
++++ src/map/skill.cpp	(cópia de trabalho)
+@@ -17592,7 +17592,7 @@
+ 				clif_upgrademessage(sd, 3, material[ditem->wlv]);
+ 				return;
+ 			}
+-			per = status_get_refine_chance(static_cast<refine_type>(ditem->wlv), (int)item->refine, false);
++			per = status_get_refine_chance(static_cast<refine_type>(ditem->refine_type), (int)item->refine, REFINE_COST_NORMAL);
+ 			if( sd->class_&JOBL_THIRD )
+ 				per += 10;
+ 			else
+Index: src/map/status.cpp
+===================================================================
+--- src/map/status.cpp	(revisão 65528)
++++ src/map/status.cpp	(cópia de trabalho)
+@@ -50,10 +50,11 @@
+ 
+ // Bonus values and upgrade chances for refining equipment
+ static struct {
+-	int chance[REFINE_CHANCE_TYPE_MAX][MAX_REFINE]; /// Success chance
++	int chance[REFINE_COST_MAX][MAX_REFINE]; /// Success chance
+ 	int bonus[MAX_REFINE]; /// Cumulative fixed bonus damage
+ 	int randombonus_max[MAX_REFINE]; /// Cumulative maximum random bonus damage
+ 	struct refine_cost cost[REFINE_COST_MAX];
++	struct refine_bs_blessing bs_blessing[MAX_REFINE];
+ } refine_info[REFINE_TYPE_MAX];
+ 
+ static struct eri *sc_data_ers; /// For sc_data entries
+@@ -3963,8 +3964,8 @@
+ 			struct weapon_data *wd;
+ 			struct weapon_atk *wa;
+ 
+-			if(wlv >= REFINE_TYPE_MAX)
+-				wlv = REFINE_TYPE_MAX - 1;
++			if(wlv >= REFINE_TYPE_WEAPON4)
++				wlv = REFINE_TYPE_WEAPON4 - 1;
+ 			if(i == EQI_HAND_L && sd->inventory.u.items_inventory[index].equip == EQP_HAND_L) {
+ 				wd = &sd->left_weapon; // Left-hand weapon
+ 				wa = &base_status->lhw;
+@@ -3974,15 +3975,15 @@
+ 			}
+ 			wa->atk += sd->inventory_data[index]->atk;
+ 			if(r)
+-				wa->atk2 = refine_info[wlv].bonus[r-1] / 100;
++				wa->atk2 = refine_info[sd->inventory_data[index]->refine_type].bonus[r-1] / 100;
+ #ifdef RENEWAL
+ 			wa->matk += sd->inventory_data[index]->matk;
+ 			wa->wlv = wlv;
+ 			if(r && sd->weapontype1 != W_BOW) // Renewal magic attack refine bonus
+-				wa->matk += refine_info[wlv].bonus[r-1] / 100;
++				wa->matk += refine_info[sd->inventory_data[index]->refine_type].bonus[r-1] / 100;
+ #endif
+ 			if(r) // Overrefine bonus.
+-				wd->overrefine = refine_info[wlv].randombonus_max[r-1] / 100;
++				wd->overrefine = refine_info[sd->inventory_data[index]->refine_type].randombonus_max[r-1] / 100;
+ 			wa->range += sd->inventory_data[index]->range;
+ 			if(sd->inventory_data[index]->script && (pc_has_permission(sd,PC_PERM_USE_ALL_EQUIPMENT) || !itemdb_isNoEquip(sd->inventory_data[index],sd->bl.m))) {
+ 				if (wd == &sd->left_weapon) {
+@@ -4010,7 +4011,7 @@
+ 			int r;
+ 
+ 			if ( (r = sd->inventory.u.items_inventory[index].refine) )
+-				refinedef += refine_info[REFINE_TYPE_ARMOR].bonus[r-1];
++				refinedef += refine_info[sd->inventory_data[index]->refine_type].bonus[r-1];
+ 			if(sd->inventory_data[index]->script && (pc_has_permission(sd,PC_PERM_USE_ALL_EQUIPMENT) || !itemdb_isNoEquip(sd->inventory_data[index],sd->bl.m))) {
+ 				if( i == EQI_HAND_L ) // Shield
+ 					sd->state.lr_flag = 3;
+@@ -15414,21 +15415,40 @@
+  * Get the chance to upgrade a piece of equipment
+  * @param wlv: The weapon type of the item to refine (see see enum refine_type)
+  * @param refine: The target's refine level
++ * @param type: refine type for cost & rate
+  * @return The chance to refine the item, in percent (0~100)
+  */
+-int status_get_refine_chance(enum refine_type wlv, int refine, bool enriched)
++int status_get_refine_chance(enum refine_type refine_type, int refine, enum refine_cost_type type)
+ {
+-	if ( refine < 0 || refine >= MAX_REFINE)
++	if (refine < 0 || refine >= MAX_REFINE)
+ 		return 0;
+-	
+-	int type = enriched ? 1 : 0;
+-	if (battle_config.event_refine_chance)
+-		type |= 2;
+ 
+-	return refine_info[wlv].chance[type][refine];
++	if (type < REFINE_COST_NORMAL || type >= REFINE_COST_MAX)
++		return 0;
++
++	return refine_info[refine_type].chance[type][refine];
+ }
+ 
+ /**
++ * Get Blacksmith Blessing requirement for refining
++ * @param bs Pointer to store the value
++ * @param type Armor or weapon level (see enum refine_type)
++ * @param refine Current refine level
++ * @return True if has valid value, false otherwise.
++ **/
++bool status_get_refine_blacksmithBlessing(struct refine_bs_blessing* bs, enum refine_type type, int refine)
++{
++	if (refine < 0 || refine >= MAX_REFINE)
++		return false;
++
++	if (type < REFINE_TYPE_ARMOR || type >= REFINE_TYPE_MAX)
++		return false;
++
++	memcpy(bs, &refine_info[type].bs_blessing[refine], sizeof(struct refine_bs_blessing));
++	return true;
++}
++
++/**
+  * Check if status is disabled on a map
+  * @param type: Status Change data
+  * @param mapIsVS: If the map is a map_flag_vs type
+@@ -15519,7 +15539,7 @@
+  * @param file_name: File name for displaying only
+  * @return True on success or false on failure
+  */
+-static bool status_yaml_readdb_refine_sub(const YAML::Node &node, int refine_info_index, const std::string &file_name) {
++static bool status_yaml_readdb_refine_sub(const YAML::Node &node, enum refine_type refine_info_index, const std::string &file_name) {
+ 	if (refine_info_index < 0 || refine_info_index >= REFINE_TYPE_MAX)
+ 		return false;
+ 
+@@ -15526,12 +15546,6 @@
+ 	int bonus_per_level = node["StatsPerLevel"].as<int>();
+ 	int random_bonus_start_level = node["RandomBonusStartLevel"].as<int>();
+ 	int random_bonus = node["RandomBonusValue"].as<int>();
+-
+-	if (file_name.find("import") != std::string::npos) { // Import file, reset refine bonus before calculation
+-		for (int refine_level = 0; refine_level < MAX_REFINE; ++refine_level)
+-			refine_info[refine_info_index].bonus[refine_level] = 0;
+-	}
+-
+ 	const YAML::Node &costs = node["Costs"];
+ 
+ 	for (const auto costit : costs) {
+@@ -15558,6 +15572,18 @@
+ 
+ 		refine_info[refine_info_index].cost[idx].nameid = material;
+ 		refine_info[refine_info_index].cost[idx].zeny = price;
++		refine_info[refine_info_index].cost[idx].refineui = (type["RefineUI"].IsDefined()) ? type["RefineUI"].as<bool>() : true;
++
++		if (type["OnFail"].IsDefined()) {
++			const YAML::Node &onfail = type["OnFail"];
++			if (onfail["Break"].IsDefined()) {
++				refine_info[refine_info_index].cost[idx].breaking = onfail["Break"].as<uint16>();
++			}
++			if (onfail["DownRefine"].IsDefined()) {
++				refine_info[refine_info_index].cost[idx].downrefine = onfail["DownRefine"].as<uint16>();
++				refine_info[refine_info_index].cost[idx].downrefine_num = onfail["DownRefineNum"].IsDefined() ? onfail["DownRefineNum"].as<uint16>() : 1;
++			}
++		}
+ 	}
+ 
+ 	const YAML::Node &rates = node["Rates"];
+@@ -15569,14 +15595,53 @@
+ 		if (refine_level >= MAX_REFINE)
+ 			continue;
+ 
+-		if (level["NormalChance"].IsDefined())
+-			refine_info[refine_info_index].chance[REFINE_CHANCE_NORMAL][refine_level] = level["NormalChance"].as<int>();
+-		if (level["EnrichedChance"].IsDefined())
+-			refine_info[refine_info_index].chance[REFINE_CHANCE_ENRICHED][refine_level] = level["EnrichedChance"].as<int>();
+-		if (level["EventNormalChance"].IsDefined())
+-			refine_info[refine_info_index].chance[REFINE_CHANCE_EVENT_NORMAL][refine_level] = level["EventNormalChance"].as<int>();
+-		if (level["EventEnrichedChance"].IsDefined())
+-			refine_info[refine_info_index].chance[REFINE_CHANCE_EVENT_ENRICHED][refine_level] = level["EventEnrichedChance"].as<int>();
++		if (level["Chances"].IsDefined()) {
++			const YAML::Node &chances = level["Chances"];
++			for (const auto chanceit : chances) {
++				int i;
++				const YAML::Node &chance = chanceit;
++				const std::string keys[] = { "Type", "Rate" };
++
++				for (i = 0; i < ARRAYLENGTH(keys); i++) {
++					if (!chance[keys[i]].IsDefined()) {
++						ShowWarning("status_yaml_readdb_refine_sub: Invalid Chances with undefined " CL_WHITE "%s" CL_RESET "in file" CL_WHITE "%s" CL_RESET ".\n", keys[i].c_str(), file_name.c_str());
++						break;
++					}
++				}
++				if (i != ARRAYLENGTH(keys)) {
++					ShowError("status_yaml_readdb_refine_sub: Skipping incomplete node for Chances list.\n");
++					continue;
++				}
++
++				std::string chance_type = chance["Type"].as<std::string>();
++				int64 chance_idx = 0;
++				if (!script_get_constant(chance_type.c_str(), &chance_idx)) {
++					ShowWarning("status_yaml_readdb_refine_sub: Invalid Chance Type " CL_WHITE "%s" CL_RESET "in file" CL_WHITE "%s" CL_RESET ".\n", chance_type.c_str(), file_name.c_str());
++					continue;
++				}
++				refine_info[refine_info_index].chance[chance_idx][refine_level] = chance["Rate"].as<int>();
++			}
++		}
++
++		if (level["BlacksmithBlessing"].IsDefined()) {
++			int i = 0;
++			const YAML::Node &bb = level["BlacksmithBlessing"];
++			const std::string keys[] = { "ItemID", "Count" };
++
++			for (i = 0; i < ARRAYLENGTH(keys); i++) {
++				if (!bb[keys[i]].IsDefined()) {
++					ShowWarning("status_yaml_readdb_refine_sub: Invalid BlacksmithBlessing with undefined " CL_WHITE "%s" CL_RESET "in file" CL_WHITE "%s" CL_RESET ".\n", keys[i].c_str(), file_name.c_str());
++					break;
++				}
++			}
++			if (i != ARRAYLENGTH(keys)) {
++				ShowError("status_yaml_readdb_refine_sub: Skipping incomplete node for BlacksmithBlessing list.\n");
++				continue;
++			}
++			refine_info[refine_info_index].bs_blessing[refine_level].nameid = bb["ItemID"].as<uint16>();
++			refine_info[refine_info_index].bs_blessing[refine_level].count = bb["Count"].as<uint16>();
++		}
++
+ 		if (level["Bonus"].IsDefined())
+ 			refine_info[refine_info_index].bonus[refine_level] = level["Bonus"].as<int>();
+ 
+@@ -15596,7 +15661,19 @@
+  */
+ static void status_yaml_readdb_refine(const std::string &directory, const std::string &file) {
+ 	int count = 0;
+-	const std::string labels[] = { "Armor", "WeaponLv1", "WeaponLv2", "WeaponLv3", "WeaponLv4", "Shadow" };
++	struct s_labels {
++		enum refine_type type;
++		const std::string label;
++	} labels[] = {
++		{ REFINE_TYPE_ARMOR, "Armor"},
++		{ REFINE_TYPE_WEAPON1, "WeaponLv1" },
++		{ REFINE_TYPE_WEAPON2, "WeaponLv2" },
++		{ REFINE_TYPE_WEAPON3, "WeaponLv3" },
++		{ REFINE_TYPE_WEAPON4, "WeaponLv4" },
++		{ REFINE_TYPE_SHADOW, "Shadow" },
++		{ REFINE_TYPE_SHADOW_WEAPON, "ShadowWeapon" },
++		{ REFINE_TYPE_COSTUME, "Costume" },
++	};
+ 	const std::string current_file = directory + "/" + file;
+ 	YAML::Node config;
+ 
+@@ -15609,9 +15686,9 @@
+ 	}
+ 
+ 	for (int i = 0; i < ARRAYLENGTH(labels); i++) {
+-		const YAML::Node &node = config[labels[i]];
++		const YAML::Node &node = config[labels[i].label];
+ 
+-		if (node.IsDefined() && status_yaml_readdb_refine_sub(node, i, current_file))
++		if (node.IsDefined() && status_yaml_readdb_refine_sub(node, labels[i].type, current_file))
+ 			count++;
+ 	}
+ 	ShowStatus("Done reading '" CL_WHITE "%d" CL_RESET "' entries in '" CL_WHITE "%s" CL_RESET "'.\n", count, current_file.c_str());
+@@ -15619,15 +15696,32 @@
+ 
+ /**
+  * Returns refine cost (zeny or item) for a weapon level.
+- * @param weapon_lv Weapon level
++ * @param refine_type Refine type see enum refine_type
+  * @param type Refine type (can be retrieved from refine_cost_type enum)
+  * @param what true = returns zeny, false = returns item id
+  * @return Refine cost for a weapon level
+  */
+-int status_get_refine_cost(int weapon_lv, int type, bool what) {
+-	return what ? refine_info[weapon_lv].cost[type].zeny : refine_info[weapon_lv].cost[type].nameid;
++int status_get_refine_cost(enum refine_type refine_type, int type, enum refine_info_type what) {
++	switch( what ){
++		case REFINE_MATERIAL_ID:
++			return refine_info[refine_type].cost[type].nameid;
++		case REFINE_ZENY_COST:
++			return refine_info[refine_type].cost[type].zeny;
++		case REFINE_REFINEUI_ENABLED:
++			return refine_info[refine_type].cost[type].refineui;
++	}
++
++	return 0;
+ }
+ 
++struct refine_cost *status_get_refine_cost_(enum refine_type refine_type, int type) {
++	if (refine_type < REFINE_TYPE_ARMOR || refine_type >= REFINE_TYPE_MAX)
++		return NULL;
++	if (type < REFINE_COST_NORMAL || type >= REFINE_COST_MAX)
++		return NULL;
++	return &refine_info[refine_type].cost[type];
++}
++
+ /**
+  * Read attribute fix database for attack calculations
+  * Function stores information in the attr_fix_table
+@@ -15706,14 +15800,17 @@
+ 	// refine_db.yml
+ 	for(i=0;i<ARRAYLENGTH(refine_info);i++)
+ 	{
+-		memset(refine_info[i].cost, 0, sizeof(struct refine_cost));
+-		for(j = 0; j < REFINE_CHANCE_TYPE_MAX; j++)
+-			for(k=0;k<MAX_REFINE; k++)
++		memset(&refine_info[i].cost, 0, sizeof(struct refine_cost)*REFINE_COST_MAX);
++		memset(&refine_info[i].bs_blessing, 0, sizeof(struct refine_bs_blessing)*MAX_REFINE);
++		for (j = 0; j < REFINE_COST_MAX; j++) {
++			for (k = 0; k < MAX_REFINE; k++)
+ 			{
+-				refine_info[i].chance[j][k] = 100;
++				refine_info[i].chance[j][k] = 0;
+ 				refine_info[i].bonus[k] = 0;
+ 				refine_info[i].randombonus_max[k] = 0;
+ 			}
++			refine_info[i].cost[j].breaking = 100;
++		}
+ 	}
+ 	// attr_fix.txt
+ 	for(i=0;i<MAX_ELE_LEVEL;i++)
+Index: src/map/status.hpp
+===================================================================
+--- src/map/status.hpp	(revisão 65528)
++++ src/map/status.hpp	(cópia de trabalho)
+@@ -30,16 +30,18 @@
+ 
+ /// Refine type
+ enum refine_type {
+-	REFINE_TYPE_ARMOR	= 0,
+-	REFINE_TYPE_WEAPON1	= 1,
+-	REFINE_TYPE_WEAPON2	= 2,
+-	REFINE_TYPE_WEAPON3	= 3,
+-	REFINE_TYPE_WEAPON4	= 4,
+-	REFINE_TYPE_SHADOW	= 5,
+-	REFINE_TYPE_MAX		= 6
++	REFINE_TYPE_ARMOR = 0,
++	REFINE_TYPE_WEAPON1,
++	REFINE_TYPE_WEAPON2,
++	REFINE_TYPE_WEAPON3,
++	REFINE_TYPE_WEAPON4,
++	REFINE_TYPE_SHADOW,
++	REFINE_TYPE_SHADOW_WEAPON,
++	REFINE_TYPE_COSTUME,
++	REFINE_TYPE_MAX
+ };
+ 
+-/// Refine cost type
++/// Refine cost & chance type
+ enum refine_cost_type {
+ 	REFINE_COST_NORMAL = 0,
+ 	REFINE_COST_OVER10,
+@@ -48,17 +50,37 @@
+ 	REFINE_COST_OVER10_HD,
+ 	REFINE_COST_HOLINK,
+ 	REFINE_COST_WAGJAK,
++	REFINE_COST_BLESSED,
++	REFINE_COST_EVT_ENRICHED,
++	REFINE_COST_EVT_OVER10_HD,
+ 	REFINE_COST_MAX
+ };
+ 
++// Refine information type
++enum refine_info_type {
++	REFINE_MATERIAL_ID = 0,
++	REFINE_ZENY_COST,
++	REFINE_REFINEUI_ENABLED,
++};
++
+ struct refine_cost {
+ 	unsigned short nameid;
+ 	int zeny;
++	bool refineui;
++	uint16 breaking;
++	uint16 downrefine;
++	uint16 downrefine_num;
+ };
+ 
++struct refine_bs_blessing {
++	unsigned short nameid, count;
++};
++
+ /// Get refine chance
+-int status_get_refine_chance(enum refine_type wlv, int refine, bool enriched);
+-int status_get_refine_cost(int weapon_lv, int type, bool what);
++int status_get_refine_chance(enum refine_type refine_type, int refine, enum refine_cost_type type);
++int status_get_refine_cost(enum refine_type refine_type, int type, enum refine_info_type what);
++bool status_get_refine_blacksmithBlessing(struct refine_bs_blessing* bs, enum refine_type type, int refine);
++struct refine_cost *status_get_refine_cost_(enum refine_type refine_type, int type);
+ 
+ /// Weapon attack modification for size
+ struct s_sizefix_db {
+@@ -2316,15 +2338,6 @@
+ 	CALCWT_CARTSTATE = 0x4,	///< Whether to check for cart state
+ };
+ 
+-// Enum for refine chance types
+-enum e_refine_chance_type {
+-	REFINE_CHANCE_NORMAL = 0,
+-	REFINE_CHANCE_ENRICHED,
+-	REFINE_CHANCE_EVENT_NORMAL,
+-	REFINE_CHANCE_EVENT_ENRICHED,
+-	REFINE_CHANCE_TYPE_MAX
+-};
+-
+ ///Define to determine who gets HP/SP consumed on doing skills/etc. [Skotlex]
+ #define BL_CONSUME (BL_PC|BL_HOM|BL_MER|BL_ELEM)
+ ///Define to determine who has regen
